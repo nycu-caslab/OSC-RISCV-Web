@@ -16,28 +16,25 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!--
-    this give us a css class that will be invisible only if js is disabled
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
   
-  <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -46,11 +43,10 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'labs/lab0';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="External Resourses" href="../references/external_resources.html" />
+    <link rel="next" title="Lab 1: Hello World" href="lab1.html" />
     <link rel="prev" title="Staff" href="../class/staff.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -66,8 +62,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="../search.html"
       method="get">
@@ -75,6 +82,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -82,8 +90,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -99,8 +107,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -130,11 +137,15 @@
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Class:</span></p>
@@ -144,6 +155,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Labs:</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Lab 0: Environment Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab1.html">Lab 1: Hello World</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -157,14 +169,9 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
-      <div class="sidebar-primary-item">
-<div id="ethical-ad-placement"
-      class="flat"
-      data-ea-publisher="readthedocs"
-      data-ea-type="readthedocs-sidebar"
-      data-ea-manual="true">
-</div></div>
   </div>
+  
+  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -261,16 +268,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -309,14 +324,15 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-on-qemu">Check on QEMU</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deploy-to-real-rpi3">Deploy to REAL Rpi3</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deploy-to-real-vf2">Deploy to REAL VF2</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-kernel-image-to-fit-image">From Kernel Image to FIT Image</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flash-bootable-image-to-sd-card">Flash Bootable Image to SD Card</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interact-with-rpi3">Interact with Rpi3</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interact-with-vf2">Interact with VF2</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#debugging">Debugging</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-on-qemu">Debug on QEMU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-on-real-rpi3">Debug on Real Rpi3</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-on-real-vf2">Debug on Real VF2</a></li>
 </ul>
 </li>
 </ul>
@@ -330,84 +346,98 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="lab-0-environment-setup">
+  <div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The content marked as <code class="docutils literal notranslate"><span class="pre">#TODO</span></code> or <code class="docutils literal notranslate"><span class="pre">#FIX</span></code> is still under review and will be finalized in the next update.</p>
+</div>
+<section id="lab-0-environment-setup">
 <h1>Lab 0: Environment Setup<a class="headerlink" href="#lab-0-environment-setup" title="Link to this heading">#</a></h1>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
-<p>In Lab 0, you need to prepare the environment for future development.
-You should install the target toolchain, and use them to build a bootable image for rpi3.</p>
+<p>In Lab 0, you will prepare the development environment for the future labs.
+You should install the required toolchain and use it to build a bootable image for VF2 board.</p>
 </section>
 <section id="goals-of-this-lab">
 <h2>Goals of this lab<a class="headerlink" href="#goals-of-this-lab" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Set up the development environment.</p></li>
-<li><p>Understand what’s cross-platform development.</p></li>
-<li><p>Test your rpi3.</p></li>
+<li><p>Understand the basics of cross-platform development.</p></li>
+<li><p>Verify the functionality of your VF2 board.</p></li>
 </ul>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>This lab is an introductory lab.
-It won’t be part of your final grade, but you still need to finish all <code class="docutils literal notranslate"><span class="pre">todo</span></code> parts,
-or you’ll be in trouble in the next lab.</p>
+<p>This lab is an introductory exercise.
+It is not graded, but completing all the <code class="docutils literal notranslate"><span class="pre">todo</span></code> parts is essential
+to ensure smooth progress in subsequent labs.
+Skipping them may result in difficulties later on.</p>
 </div>
 </section>
 <section id="cross-platform-development">
 <h2>Cross-Platform Development<a class="headerlink" href="#cross-platform-development" title="Link to this heading">#</a></h2>
 <section id="cross-compiler">
 <h3>Cross Compiler<a class="headerlink" href="#cross-compiler" title="Link to this heading">#</a></h3>
-<p>Rpi3 uses ARM Cortex-A53 CPU.
-To compile your source code to 64-bit ARM machine code, you need a cross compiler if you develop
-on a non-ARM64 environment.</p>
+<p>VF2 uses the StarFive JH-7110 System-on-Chip (SoC) with a 64-bit RISC-V processor.
+To compile your source code to 64-bit RISC-V machine code, you need a cross compiler if you develop
+on a non-RISC-V environment.</p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
-<p>Install a cross compiler on your host computer.</p>
+<p>Install the cross compiler <code class="docutils literal notranslate"><span class="pre">gcc-riscv64-unknown-elf</span></code> on your host computer. #FIX (you can either install or build from source…)</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This lab is designed and tested primarily on Linux-based systems.
+While it may be possible to perform the tasks on other platforms (e.g., macOS or Windows with additional setup),
+such environments are not officially supported for now and may introduce unexpected issues.
+Please proceed with caution if you choose to use a non-Linux environment, and be aware that TA assistance may be limited in such cases.</p>
 </div>
 </section>
 <section id="linker">
 <h3>Linker<a class="headerlink" href="#linker" title="Link to this heading">#</a></h3>
-<p>You might not notice the existence of linkers before.
-It’s because the compiler uses the default linker script for you. (<code class="docutils literal notranslate"><span class="pre">ld</span> <span class="pre">--verbose</span></code> to check the content)
-In bare-metal programming, you should set the memory layout yourself.</p>
-<p>This is an incomplete linker script for you.
-You should extend it in the following lab.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span>SECTIONS
-<span class="linenos">2</span>{
-<span class="linenos">3</span>  . = 0x80000;
-<span class="linenos">4</span>  .text : { *(.text) }
-<span class="linenos">5</span>}
+<p>You might not have explicitly encountered linkers in previous development experiences.
+This is because most compilers automatically apply a default linker script
+during the build process. (Use <code class="docutils literal notranslate"><span class="pre">ld</span> <span class="pre">--verbose</span></code> to inspect the default script.)
+In bare-metal programming, you are responsible for defining the memory layout manually.</p>
+<p>The following is an incomplete linker script for demonstration.
+You will extend it in a future lab.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SECTIONS</span>
+<span class="p">{</span>
+  <span class="o">.</span> <span class="o">=</span> <span class="mh">0x80200000</span><span class="p">;</span>
+  <span class="o">.</span><span class="n">text</span> <span class="p">:</span> <span class="p">{</span> <span class="o">*</span><span class="p">(</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>
 <section id="qemu">
 <h3>QEMU<a class="headerlink" href="#qemu" title="Link to this heading">#</a></h3>
 <p>In cross-platform development,
-it’s easier to validate your code on an emulator first.
-You can use QEMU to test your code first before validating them on a real rpi3.</p>
+using an emulator can simplify the process of validating your code
+before testing it on physical hardware.
+QEMU provides such an environment for early-stage development and testing.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Although QEMU provides a machine option for rpi3, it doesn’t behave the same as a real rpi3.
-You should validate your code on your rpi3, too.</p>
+<p>QEMU provides a machine option <code class="docutils literal notranslate"><span class="pre">virt</span></code> (a general-purpose virtual board),
+but it does not fully replicate the behavior of a real VF2 board.
+You should always verify your code on actual hardware as well.</p>
 </div>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
-<p>Install <code class="docutils literal notranslate"><span class="pre">qemu-system-aarch64</span></code>.</p>
+<p>Install <code class="docutils literal notranslate"><span class="pre">qemu-system-riscv64</span></code> on your host computer.</p>
 </div>
 </section>
 </section>
 <section id="from-source-code-to-kernel-image">
 <h2>From Source Code to Kernel Image<a class="headerlink" href="#from-source-code-to-kernel-image" title="Link to this heading">#</a></h2>
-<p>You have the basic knowledge of the toolchain for cross-platform development. Now, it’s time to practice them.</p>
+<p>At this point, you should have a basic understanding of the cross-platform toolchain.
+The following steps will guide you through using these tools in practice.</p>
 <section id="from-source-code-to-object-files">
 <h3>From Source Code to Object Files<a class="headerlink" href="#from-source-code-to-object-files" title="Link to this heading">#</a></h3>
 <p>Source code is converted to object files by a cross compiler.
 After saving the following assembly as <code class="docutils literal notranslate"><span class="pre">a.S</span></code>,
-you can convert it to an object file by <code class="docutils literal notranslate"><span class="pre">aarch64-linux-gnu-gcc</span> <span class="pre">-c</span> <span class="pre">a.S</span></code>.
-Or if you would like to, you can also try llvm’s linker <code class="docutils literal notranslate"><span class="pre">clang</span> <span class="pre">-mcpu=cortex-a53</span> <span class="pre">--target=aarch64-rpi3-elf</span> <span class="pre">-c</span> <span class="pre">a.S</span></code>,
-especially if you are trying to develop on macOS.</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="n">section</span><span class="w"> </span><span class="s">&quot;.text&quot;</span>
-<span class="nl">_start</span><span class="p">:</span>
-<span class="w">  </span><span class="n">wfe</span>
-<span class="w">  </span><span class="n">b</span><span class="w"> </span><span class="n">_start</span>
+you can convert it to an object file by <code class="docutils literal notranslate"><span class="pre">riscv64-unknown-elf-gcc</span> <span class="pre">-c</span> <span class="pre">a.S</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">section</span> <span class="s2">&quot;.text&quot;</span>
+<span class="n">_start</span><span class="p">:</span>
+  <span class="n">wfi</span>
+  <span class="n">j</span> <span class="n">_start</span>
 </pre></div>
 </div>
 </section>
@@ -419,28 +449,23 @@ Program loaders are usually provided by the operating system in a regular develo
 In bare-metal programming, ELF can be loaded by some bootloaders.</p>
 <p>To convert the object file from the previous step to an ELF file,
 you can save the provided linker script as <code class="docutils literal notranslate"><span class="pre">linker.ld</span></code>, and run the following command.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># On GNU LD
-aarch64-linux-gnu-ld -T linker.ld -o kernel8.elf a.o
-# On LLVM
-ld.lld -m aarch64elf -T linker.ld -o kernel8.elf a.o
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv64</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">ld</span> <span class="o">-</span><span class="n">T</span> <span class="n">linker</span><span class="o">.</span><span class="n">ld</span> <span class="o">-</span><span class="n">o</span> <span class="n">kernel</span><span class="o">.</span><span class="n">elf</span> <span class="n">a</span><span class="o">.</span><span class="n">o</span>
 </pre></div>
 </div>
 </section>
 <section id="from-elf-to-kernel-image">
 <h3>From ELF to Kernel Image<a class="headerlink" href="#from-elf-to-kernel-image" title="Link to this heading">#</a></h3>
-<p>Rpi3’s bootloader can’t load ELF files.
+<p>VF2’s bootloader cannot load ELF files.
 Hence, you need to convert the ELF file to a raw binary image.
 You can use <code class="docutils literal notranslate"><span class="pre">objcopy</span></code> to convert ELF files to raw binary.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>aarch64-linux-gnu-objcopy -O binary kernel8.elf kernel8.img
-# Or
-llvm-objcopy --output-target=aarch64-rpi3-elf -O binary kernel8.elf kernel8.img
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv64</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">objcopy</span> <span class="o">-</span><span class="n">O</span> <span class="n">binary</span> <span class="n">kernel</span><span class="o">.</span><span class="n">elf</span> <span class="n">kernel</span><span class="o">.</span><span class="n">bin</span>
 </pre></div>
 </div>
 </section>
 <section id="check-on-qemu">
 <h3>Check on QEMU<a class="headerlink" href="#check-on-qemu" title="Link to this heading">#</a></h3>
 <p>After building, you can use QEMU to see the dumped assembly.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>qemu-system-aarch64 -M raspi3b -kernel kernel8.img -display none -d in_asm
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qemu</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">riscv64</span> <span class="o">-</span><span class="n">M</span> <span class="n">virt</span> <span class="o">-</span><span class="n">kernel</span> <span class="n">kernel</span><span class="o">.</span><span class="n">bin</span> <span class="o">-</span><span class="n">display</span> <span class="n">none</span> <span class="o">-</span><span class="n">d</span> <span class="n">in_asm</span>
 </pre></div>
 </div>
 <div class="admonition-todo admonition">
@@ -449,94 +474,138 @@ llvm-objcopy --output-target=aarch64-rpi3-elf -O binary kernel8.elf kernel8.img
 </div>
 </section>
 </section>
-<section id="deploy-to-real-rpi3">
-<h2>Deploy to REAL Rpi3<a class="headerlink" href="#deploy-to-real-rpi3" title="Link to this heading">#</a></h2>
+<section id="deploy-to-real-vf2">
+<h2>Deploy to REAL VF2<a class="headerlink" href="#deploy-to-real-vf2" title="Link to this heading">#</a></h2>
+<section id="from-kernel-image-to-fit-image">
+<h3>From Kernel Image to FIT Image<a class="headerlink" href="#from-kernel-image-to-fit-image" title="Link to this heading">#</a></h3>
+<p>The bootloader on VF2 does not accept ELF or raw kernel binaries directly.
+Instead, it uses a Flattened Image Tree (FIT) format, which bundles together the kernel image,
+device tree blob (DTB), and optionally an initramfs into a single file.</p>
+<p>To generate a FIT image, you will need the <cite>mkimage</cite> tool, which is part of the <cite>u-boot-tools</cite> package.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">u</span><span class="o">-</span><span class="n">boot</span><span class="o">-</span><span class="n">tools</span>
+</pre></div>
+</div>
+<p>You also need to create a configuration file named <code class="docutils literal notranslate"><span class="pre">kernel.its</span></code>, which specifies
+the contents and layout of the resulting FIT image. This file must reference the following components:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">kernel.bin</span></code> – the raw kernel image generated earlier</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">jh7110-starfive-visionfive-2-v1.3b.dtb</span></code> – the device tree for VF2 #TODO provide link</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initramfs.cpio</span></code> – an optional root filesystem archive #TODO confirm if required</p></li>
+</ul>
+<p>The required DTB file can be downloaded from the course resource page. #TODO</p>
+<p>Once the required files and the <code class="docutils literal notranslate"><span class="pre">kernel.its</span></code> configuration are prepared,
+use the following command to generate the final FIT image:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkimage</span> <span class="o">-</span><span class="n">f</span> <span class="n">src</span><span class="o">/</span><span class="n">kernel</span><span class="o">.</span><span class="n">its</span> <span class="n">kernel</span><span class="o">.</span><span class="n">fit</span>
+</pre></div>
+</div>
+</section>
 <section id="flash-bootable-image-to-sd-card">
 <h3>Flash Bootable Image to SD Card<a class="headerlink" href="#flash-bootable-image-to-sd-card" title="Link to this heading">#</a></h3>
-<p>To prepare a bootable image for rpi3, you have to prepare at least the following stuff.</p>
+<p>To boot your VF2 board, you need to write a properly configured bootable image to an SD card.</p>
+<p>At minimum, the SD card must contain a FAT16 or FAT32 partition with the following files:</p>
 <ul class="simple">
-<li><p>An FAT16/32 partition contains</p>
-<ul>
-<li><p>Firmware for GPU.</p></li>
-<li><p>Kernel image.(kernel8.img)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kernel.fit</span></code> – the FIT image generated in the previous step</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vf2_uEnv.txt</span></code> – the U-Boot environment configuration file</p></li>
 </ul>
-</li>
-</ul>
-<p>There are two ways to do it.</p>
-<ol class="arabic">
-<li><p>We already prepared a <a class="reference external" href="https://github.com/nycu-caslab/OSC2024/raw/main/supplement/nycuos.img">bootable image</a>.</p>
-<p>You can use the following command to flash it to your SD card.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dd if=nycuos.img of=/dev/sdb
+<p>There are two ways to prepare your SD card:</p>
+<p><strong>Method 1： Use a prebuilt image (recommended)</strong></p>
+<p>A prebuilt bootable image is available from the course repository:</p>
+<p><a href="#id1"><span class="problematic" id="id2">`https://link.to/vf2-sdcard.img`_</span></a> #TODO</p>
+<p>You can write it to your SD card using the <code class="docutils literal notranslate"><span class="pre">dd</span></code> command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">dd</span> <span class="k">if</span><span class="o">=</span><span class="n">vf2</span><span class="o">-</span><span class="n">sdcard</span><span class="o">.</span><span class="n">img</span> <span class="n">of</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdX</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="n">M</span> <span class="n">status</span><span class="o">=</span><span class="n">progress</span> <span class="n">conv</span><span class="o">=</span><span class="n">fsync</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The additional parameters are included to improve the usability of the command,
+such as speeding up write operations and showing progress.
+For detailed explanations, please refer to the <code class="docutils literal notranslate"><span class="pre">dd</span></code> manual (<code class="docutils literal notranslate"><span class="pre">man</span> <span class="pre">dd</span></code>).</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>/dev/sdb should be replaced by your SD card device. You can check it by <cite>lsblk</cite></p>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">/dev/sdX</span></code> with the actual device name of your SD card.
+You can check the device name using <code class="docutils literal notranslate"><span class="pre">lsblk</span></code>.
+Writing to the wrong device may cause data loss.</p>
 </div>
-<p>It’s already partition and contains a FAT32 filesystem with firmware inside.
-You can mount the partition to check.</p>
-</li>
-<li><p>Partition the disk and prepare the booting firmware yourself.
-You can download the firmware from
-<a class="github reference external" href="https://github.com/raspberrypi/firmware/tree/master/boot">raspberrypi/firmware</a></p>
-<p>bootcode.bin, fixup.dat and start.elf are essentials.
-More information about pi3’s booting could be checked on the official website
-<a class="reference external" href="https://www.raspberrypi.org/documentation/configuration/boot_folder.md">https://www.raspberrypi.org/documentation/configuration/boot_folder.md</a>
-<a class="reference external" href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/README.md">https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/README.md</a></p>
-<p>Finally, put the firmware and your kernel image into the FAT partition.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Besides using <code class="docutils literal notranslate"><span class="pre">mkfs.fat</span> <span class="pre">-F</span> <span class="pre">32</span></code> to create a FAT32 filesystem, you should also set the partition type to FAT.</p>
-</div>
-</li>
-</ol>
+<p>The image is already partitioned, contains the boot firmware, and includes a FAT32 filesystem.
+You may mount the partition to inspect or modify its contents if needed.</p>
+<p><strong>Method 2: Manually create partitions and copy files</strong></p>
+<p>You may also manually partition the SD card and install the necessary firmware and files yourself.
+Detailed instructions for manual setup are available at:</p>
+<p><a href="#id3"><span class="problematic" id="id4">`https://link.io/instructions`_</span></a> #TODO based on <a class="reference external" href="https://hackmd.io/&#64;chiahsuantw/vf2-sdcard">https://hackmd.io/&#64;chiahsuantw/vf2-sdcard</a></p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
-<p>Use either one of the methods to set up your SD card.</p>
+<p>Use one of the two methods to prepare your SD card for booting VF2.</p>
 </div>
 </section>
-<section id="interact-with-rpi3">
-<h3>Interact with Rpi3<a class="headerlink" href="#interact-with-rpi3" title="Link to this heading">#</a></h3>
-<p>In our provided bootable image, it contains a kernel image that can echoes what you type through UART.
-You can use it to test if your Lab kits function well.</p>
-<p>1. If you use method 2 to set up your bootable image, you should download <a class="reference external" href="https://github.com/nycu-caslab/OSC2024/raw/main/supplement/kernel8.img">kernel8.img</a>
-, and put it into your boot partition. It’s identical to the one in the provided bootable image.</p>
-<ol class="arabic simple" start="2">
-<li><p>Plug in the UART to USB converter to your host machine, and open it through a serial console such as screen or putty with the correct baud rate.</p></li>
-<li><p>Connect TX, RX, GND to the corresponding pins on rpi3, and turn on your rpi3. You can follow the picture below to set up your UART.</p></li>
-<li><p>After your rpi3 powers on, you can type some letters, and your serial console should print what you just typed.</p></li>
+<section id="interact-with-vf2">
+<h3>Interact with VF2<a class="headerlink" href="#interact-with-vf2" title="Link to this heading">#</a></h3>
+<p>After setting up your SD card and inserting it into the VF2 board,
+you can interact with the system via UART to verify that your setup is functioning correctly.</p>
+<p>The prebuilt kernel included in the image echoes back any characters you type through the serial console.</p>
+<p>Follow these steps to test the UART connection:</p>
+<ol class="arabic simple">
+<li><p>If you use Method 2 to set up your bootable image, download the kernel binary and place it into the boot partition of your SD card.</p></li>
 </ol>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>screen /dev/ttyUSB0 115200
+<blockquote>
+<div><p><a class="reference external" href="https://link.to.kernel.bin">kernel.bin</a> #TODO</p>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Connect a UART-to-USB adapter to your host machine.</p></li>
+<li><p>Use a serial console program (e.g., <code class="docutils literal notranslate"><span class="pre">screen</span></code>) to open the serial port with the correct settings:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">screen</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">ttyUSB0</span> <span class="mi">115200</span>
 </pre></div>
 </div>
-<img alt="labs/images/UART.png" src="labs/images/UART.png" />
+</div></blockquote>
+<ol class="arabic" start="4">
+<li><p>Connect the TX, RX, and GND pins from the UART adapter to the corresponding UART header on the VF2 board.
+Refer to the diagram below for the correct wiring:</p>
+<img alt="labs/images/UART.png#TODO" src="labs/images/UART.png#TODO" />
+</li>
+<li><p>Power on the VF2. Once booted, try typing on your keyboard.
+You should see the characters echoed back in your serial console.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If nothing appears on the console, double-check the wiring, baud rate, and whether the kernel image was placed correctly.</p>
+</div>
 </section>
 </section>
 <section id="debugging">
 <h2>Debugging<a class="headerlink" href="#debugging" title="Link to this heading">#</a></h2>
 <section id="debug-on-qemu">
 <h3>Debug on QEMU<a class="headerlink" href="#debug-on-qemu" title="Link to this heading">#</a></h3>
-<p>Debugging on QEMU is a relatively easier way to validate your code.
-QEMU could dump memory, registers, and expose them to a debugger.
-You can use the following command waiting for gdb connection.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>qemu-system-aarch64 -M raspi3b -kernel kernel8.img -display none -S -s
+<p>QEMU supports basic debugging features such as memory/register inspection and remote debugging with GDB.
+This allows you to analyze program behavior before deploying to physical hardware.</p>
+<p>To begin, install GDB with multi-architecture support on your host machine:</p>
+<div class="admonition-todo admonition">
+<p class="admonition-title">Todo</p>
+<p>Install <code class="docutils literal notranslate"><span class="pre">gdb-multiarch</span></code> on your host computer.</p>
+</div>
+<p>Then launch QEMU in debug mode using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qemu</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">riscv64</span> <span class="o">-</span><span class="n">M</span> <span class="n">virt</span> <span class="o">-</span><span class="n">kernel</span> <span class="n">kernel</span><span class="o">.</span><span class="n">bin</span> <span class="o">-</span><span class="n">display</span> <span class="n">none</span> <span class="o">-</span><span class="n">S</span> <span class="o">-</span><span class="n">s</span>
 </pre></div>
 </div>
-<p>Then you can use the following command in gdb to load debugging information and connect to QEMU.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>file kernel8.elf
-target remote :1234
+<p>This starts QEMU in a paused state and opens a debugging port (typically at <code class="docutils literal notranslate"><span class="pre">localhost:1234</span></code>).</p>
+<p>In a separate terminal, start GDB and connect to the running QEMU instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gdb</span><span class="o">-</span><span class="n">multiarch</span>
+<span class="p">(</span><span class="n">gdb</span><span class="p">)</span> <span class="n">file</span> <span class="n">kernel</span><span class="o">.</span><span class="n">elf</span>
+<span class="p">(</span><span class="n">gdb</span><span class="p">)</span> <span class="n">target</span> <span class="n">remote</span> <span class="p">:</span><span class="mi">1234</span>
 </pre></div>
 </div>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Your gdb should also be cross-platform gdb.</p>
+<p>You can now use GDB commands to inspect registers, memory, or step through instructions.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ensure the <code class="docutils literal notranslate"><span class="pre">kernel.elf</span></code> file includes debugging symbols (e.g., compiled with <code class="docutils literal notranslate"><span class="pre">-g</span></code> flag) for full functionality.</p>
 </div>
 </section>
-<section id="debug-on-real-rpi3">
-<h3>Debug on Real Rpi3<a class="headerlink" href="#debug-on-real-rpi3" title="Link to this heading">#</a></h3>
-<p>You could either use print log or JTAG to debug on a real rpi3.
-We don’t provide JTAG in this course, you can try it if you have one.
-<a class="reference external" href="https://metebalci.com/blog/bare-metal-raspberry-pi-3b-jtag/">https://metebalci.com/blog/bare-metal-raspberry-pi-3b-jtag/</a></p>
+<section id="debug-on-real-vf2">
+<h3>Debug on Real VF2<a class="headerlink" href="#debug-on-real-vf2" title="Link to this heading">#</a></h3>
+<p>When working on real hardware, debugging options are more limited.
+You can insert serial print statements to trace control flow or variable values.</p>
+<p>JTAG debugging is not covered in this course, but advanced users with access to JTAG hardware are welcome to explore this option independently.</p>
 </section>
 </section>
 </section>
@@ -562,11 +631,11 @@ We don’t provide JTAG in this course, you can try it if you have one.
       </div>
     </a>
     <a class="right-next"
-       href="../references/external_resources.html"
+       href="lab1.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">External Resourses</p>
+        <p class="prev-next-title">Lab 1: Hello World</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -577,8 +646,7 @@ We don’t provide JTAG in this course, you can try it if you have one.
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -602,14 +670,15 @@ We don’t provide JTAG in this course, you can try it if you have one.
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-on-qemu">Check on QEMU</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deploy-to-real-rpi3">Deploy to REAL Rpi3</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deploy-to-real-vf2">Deploy to REAL VF2</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-kernel-image-to-fit-image">From Kernel Image to FIT Image</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flash-bootable-image-to-sd-card">Flash Bootable Image to SD Card</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interact-with-rpi3">Interact with Rpi3</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interact-with-vf2">Interact with VF2</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#debugging">Debugging</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-on-qemu">Debug on QEMU</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-on-real-rpi3">Debug on Real Rpi3</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-on-real-vf2">Debug on Real VF2</a></li>
 </ul>
 </li>
 </ul>
@@ -660,8 +729,8 @@ By  NYCU cas-lab
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
