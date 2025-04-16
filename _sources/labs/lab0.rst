@@ -248,7 +248,7 @@ Follow these steps to test the UART connection:
 
   .. code-block::
 
-     sudo screen /dev/ttyUSB0 115200
+    sudo screen /dev/ttyUSB0 115200
      
 4. Connect the TX, RX, and GND pins from the UART adapter to the corresponding UART header on the VF2 board.
    Refer to the diagram below for the correct wiring:
