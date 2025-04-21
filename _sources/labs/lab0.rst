@@ -171,7 +171,7 @@ the contents and layout of the resulting FIT image. This file must reference the
 
 * ``kernel.bin`` – the raw kernel image generated earlier
 * ``jh7110-starfive-visionfive-2-v1.3b.dtb`` – the device tree for VF2
-* ``initramfs.cpio`` – an optional root filesystem archive (not included for this lab)
+* ``initramfs.cpio`` – an optional root filesystem archive (not included in this lab; make sure to remove the corresponding section from the ``.its`` file to avoid errors)
 
 The required DTB file can be `downloaded <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/jh7110-starfive-visionfive-2-v1.3b.dtb>`_ from the course resource page.
 
@@ -239,17 +239,15 @@ The prebuilt kernel included in the image echoes back any characters you type th
 
 Follow these steps to test the UART connection:
 
-1. If you use Method 2 to set up your bootable image, download the kernel binary and place it into the boot partition of your SD card.
-
- `kernel.fit <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/kernel.fit>`_
+1. If you use Method 2 to set up your bootable image, download the `kernel binary <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/kernel.fit>`_ and place it into the boot partition of your SD card.
  
-1. Connect a UART-to-USB adapter to your host machine.
+2. Connect a UART-to-USB adapter to your host machine.
 
-2. Use a serial console program (e.g., ``screen``) to open the serial port with the correct settings:
+3. Use a serial console program (e.g., ``screen``) to open the serial port with the correct settings:
 
-  .. code-block::
+.. code-block::
 
-    sudo screen /dev/ttyUSB0 115200
+  sudo screen /dev/ttyUSB0 115200
      
 4. Connect the TX, RX, and GND pins from the UART adapter to the corresponding UART header on the VF2 board.
    Refer to the diagram below for the correct wiring:
