@@ -348,14 +348,14 @@ document.write(`
                   
   <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The content marked as <code class="docutils literal notranslate"><span class="pre">#TODO</span></code> or <code class="docutils literal notranslate"><span class="pre">#FIX</span></code> is still under review and will be finalized in the next update.</p>
+<p>The content marked as <code class="docutils literal notranslate"><span class="pre">#TODO</span></code> is still under review and will be finalized in the next update.</p>
 </div>
 <section id="lab-0-environment-setup">
 <h1>Lab 0: Environment Setup<a class="headerlink" href="#lab-0-environment-setup" title="Link to this heading">#</a></h1>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
 <p>In Lab 0, you will prepare the development environment for the future labs.
-You should install the required toolchain and use it to build a bootable image for VF2 board.</p>
+You should install the required toolchain and use it to build a bootable image for VF2.</p>
 </section>
 <section id="goals-of-this-lab">
 <h2>Goals of this lab<a class="headerlink" href="#goals-of-this-lab" title="Link to this heading">#</a></h2>
@@ -367,7 +367,7 @@ You should install the required toolchain and use it to build a bootable image f
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>This lab is an introductory exercise.
-It is not graded, but completing all the <code class="docutils literal notranslate"><span class="pre">todo</span></code> parts is essential
+It is not graded, but completing all the <code class="docutils literal notranslate"><span class="pre">Todo</span></code> parts is essential
 to ensure smooth progress in subsequent labs.
 Skipping them may result in difficulties later on.</p>
 </div>
@@ -381,7 +381,9 @@ To compile your source code to 64-bit RISC-V machine code, you need a cross comp
 on a non-RISC-V environment.</p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
-<p>Install the cross compiler <code class="docutils literal notranslate"><span class="pre">gcc-riscv64-unknown-elf</span></code> on your host computer. #FIX (you can either install or build from source…)</p>
+<p>Install the cross compiler <code class="docutils literal notranslate"><span class="pre">gcc-riscv64-unknown-elf</span></code> on your host computer.</p>
+<p>It is recommended to install it using a package managers like <code class="docutils literal notranslate"><span class="pre">apt</span></code>.
+Alternatively, you can build it from source following the instructions provided by the <a class="reference external" href="https://github.com/riscv-collab/riscv-gnu-toolchain">RISC-V GNU Toolchain project</a> if needed.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -489,10 +491,10 @@ device tree blob (DTB), and optionally an initramfs into a single file.</p>
 the contents and layout of the resulting FIT image. This file must reference the following components:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">kernel.bin</span></code> – the raw kernel image generated earlier</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">jh7110-starfive-visionfive-2-v1.3b.dtb</span></code> – the device tree for VF2 #TODO provide link</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">initramfs.cpio</span></code> – an optional root filesystem archive #TODO confirm if required</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">jh7110-starfive-visionfive-2-v1.3b.dtb</span></code> – the device tree for VF2</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initramfs.cpio</span></code> – an optional root filesystem archive (not included for this lab)</p></li>
 </ul>
-<p>The required DTB file can be downloaded from the course resource page. #TODO</p>
+<p>The required DTB file can be <a class="reference external" href="https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/jh7110-starfive-visionfive-2-v1.3b.dtb">downloaded</a> from the course resource page.</p>
 <p>Once the required files and the <code class="docutils literal notranslate"><span class="pre">kernel.its</span></code> configuration are prepared,
 use the following command to generate the final FIT image:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkimage</span> <span class="o">-</span><span class="n">f</span> <span class="n">src</span><span class="o">/</span><span class="n">kernel</span><span class="o">.</span><span class="n">its</span> <span class="n">kernel</span><span class="o">.</span><span class="n">fit</span>
@@ -505,12 +507,11 @@ use the following command to generate the final FIT image:</p>
 <p>At minimum, the SD card must contain a FAT16 or FAT32 partition with the following files:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">kernel.fit</span></code> – the FIT image generated in the previous step</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">vf2_uEnv.txt</span></code> – the U-Boot environment configuration file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vf2_uEnv.txt</span></code> – the U-Boot environment <a class="reference external" href="https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/vf2_uEnv.txt">configuration file</a> for VF2</p></li>
 </ul>
 <p>There are two ways to prepare your SD card:</p>
 <p><strong>Method 1： Use a prebuilt image (recommended)</strong></p>
-<p>A prebuilt bootable image is available from the course repository:</p>
-<p><a href="#id1"><span class="problematic" id="id2">`https://link.to/vf2-sdcard.img`_</span></a> #TODO</p>
+<p>A prebuilt bootable <a class="reference external" href="https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/vf2-sdcard.img">image</a> is available from the course repository.</p>
 <p>You can write it to your SD card using the <code class="docutils literal notranslate"><span class="pre">dd</span></code> command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">dd</span> <span class="k">if</span><span class="o">=</span><span class="n">vf2</span><span class="o">-</span><span class="n">sdcard</span><span class="o">.</span><span class="n">img</span> <span class="n">of</span><span class="o">=/</span><span class="n">dev</span><span class="o">/</span><span class="n">sdX</span> <span class="n">bs</span><span class="o">=</span><span class="mi">4</span><span class="n">M</span> <span class="n">status</span><span class="o">=</span><span class="n">progress</span> <span class="n">conv</span><span class="o">=</span><span class="n">fsync</span>
 </pre></div>
@@ -532,7 +533,7 @@ You may mount the partition to inspect or modify its contents if needed.</p>
 <p><strong>Method 2: Manually create partitions and copy files</strong></p>
 <p>You may also manually partition the SD card and install the necessary firmware and files yourself.
 Detailed instructions for manual setup are available at:</p>
-<p><a href="#id3"><span class="problematic" id="id4">`https://link.io/instructions`_</span></a> #TODO based on <a class="reference external" href="https://hackmd.io/&#64;chiahsuantw/vf2-sdcard">https://hackmd.io/&#64;chiahsuantw/vf2-sdcard</a></p>
+<p><a class="reference external" href="https://hackmd.io/&#64;chiahsuantw/vf2-sdcard">https://hackmd.io/&#64;chiahsuantw/vf2-sdcard</a></p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
 <p>Use one of the two methods to prepare your SD card for booting VF2.</p>
@@ -548,9 +549,9 @@ you can interact with the system via UART to verify that your setup is functioni
 <li><p>If you use Method 2 to set up your bootable image, download the kernel binary and place it into the boot partition of your SD card.</p></li>
 </ol>
 <blockquote>
-<div><p><a class="reference external" href="https://link.to.kernel.bin">kernel.bin</a> #TODO</p>
+<div><p><a class="reference external" href="https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/kernel.fit">kernel.fit</a></p>
 </div></blockquote>
-<ol class="arabic simple" start="2">
+<ol class="arabic simple">
 <li><p>Connect a UART-to-USB adapter to your host machine.</p></li>
 <li><p>Use a serial console program (e.g., <code class="docutils literal notranslate"><span class="pre">screen</span></code>) to open the serial port with the correct settings:</p></li>
 </ol>
@@ -562,7 +563,7 @@ you can interact with the system via UART to verify that your setup is functioni
 <ol class="arabic" start="4">
 <li><p>Connect the TX, RX, and GND pins from the UART adapter to the corresponding UART header on the VF2 board.
 Refer to the diagram below for the correct wiring:</p>
-<img alt="labs/images/UART.png#TODO" src="labs/images/UART.png#TODO" />
+<img alt="../_images/UART.png" src="../_images/UART.png" />
 </li>
 <li><p>Power on the VF2. Once booted, try typing on your keyboard.
 You should see the characters echoed back in your serial console.</p></li>
