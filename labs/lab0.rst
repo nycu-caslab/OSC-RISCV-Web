@@ -1,5 +1,5 @@
 .. note::
-  The content marked as ``#TODO`` or ``#FIX`` is still under review and will be finalized in the next update.
+  The content marked as ``#TODO`` is still under review and will be finalized in the next update.
 
 ========================
 Lab 0: Environment Setup
@@ -9,7 +9,7 @@ Lab 0: Environment Setup
 Introduction
 *************
 In Lab 0, you will prepare the development environment for the future labs.
-You should install the required toolchain and use it to build a bootable image for VF2 board.
+You should install the required toolchain and use it to build a bootable image for VF2.
 
 *****************
 Goals of this lab
@@ -21,7 +21,7 @@ Goals of this lab
 
 .. important::
   This lab is an introductory exercise.
-  It is not graded, but completing all the ``todo`` parts is essential 
+  It is not graded, but completing all the ``Todo`` parts is essential 
   to ensure smooth progress in subsequent labs.
   Skipping them may result in difficulties later on.
   
@@ -38,7 +38,10 @@ on a non-RISC-V environment.
 
 .. admonition:: Todo
 
-    Install the cross compiler ``gcc-riscv64-unknown-elf`` on your host computer. #FIX (you can either install or build from source...)
+    Install the cross compiler ``gcc-riscv64-unknown-elf`` on your host computer. 
+    
+    It is recommended to install it using a package managers like ``apt``. 
+    Alternatively, you can build it from source following the instructions provided by the `RISC-V GNU Toolchain project <https://github.com/riscv-collab/riscv-gnu-toolchain>`_ if needed.
 
 .. note::
   This lab is designed and tested primarily on Linux-based systems.
@@ -167,10 +170,10 @@ You also need to create a configuration file named ``kernel.its``, which specifi
 the contents and layout of the resulting FIT image. This file must reference the following components:
 
 * ``kernel.bin`` – the raw kernel image generated earlier
-* ``jh7110-starfive-visionfive-2-v1.3b.dtb`` – the device tree for VF2 #TODO provide link
-* ``initramfs.cpio`` – an optional root filesystem archive #TODO confirm if required
+* ``jh7110-starfive-visionfive-2-v1.3b.dtb`` – the device tree for VF2
+* ``initramfs.cpio`` – an optional root filesystem archive (not included for this lab)
 
-The required DTB file can be downloaded from the course resource page. #TODO
+The required DTB file can be `downloaded <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/jh7110-starfive-visionfive-2-v1.3b.dtb>`_ from the course resource page.
 
 Once the required files and the ``kernel.its`` configuration are prepared,
 use the following command to generate the final FIT image:
@@ -187,15 +190,13 @@ To boot your VF2 board, you need to write a properly configured bootable image t
 At minimum, the SD card must contain a FAT16 or FAT32 partition with the following files:
 
 * ``kernel.fit`` – the FIT image generated in the previous step
-* ``vf2_uEnv.txt`` – the U-Boot environment configuration file
+* ``vf2_uEnv.txt`` – the U-Boot environment `configuration file <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/vf2_uEnv.txt>`_ for VF2
 
 There are two ways to prepare your SD card:
 
 **Method 1： Use a prebuilt image (recommended)**
 
-A prebuilt bootable image is available from the course repository:
-
-`https://link.to/vf2-sdcard.img`_ #TODO
+A prebuilt bootable `image <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/vf2-sdcard.img>`_ is available from the course repository.
 
 You can write it to your SD card using the ``dd`` command:
 
@@ -221,7 +222,7 @@ You may mount the partition to inspect or modify its contents if needed.
 You may also manually partition the SD card and install the necessary firmware and files yourself.
 Detailed instructions for manual setup are available at:
 
-`https://link.io/instructions`_ #TODO based on https://hackmd.io/@chiahsuantw/vf2-sdcard
+`<https://hackmd.io/@chiahsuantw/vf2-sdcard>`_
 
 .. admonition:: Todo
 
@@ -240,11 +241,11 @@ Follow these steps to test the UART connection:
 
 1. If you use Method 2 to set up your bootable image, download the kernel binary and place it into the boot partition of your SD card.
 
- `kernel.bin <https://link.to.kernel.bin>`_ #TODO
+ `kernel.fit <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/kernel.fit>`_
  
-2. Connect a UART-to-USB adapter to your host machine.
+1. Connect a UART-to-USB adapter to your host machine.
 
-3. Use a serial console program (e.g., ``screen``) to open the serial port with the correct settings:
+2. Use a serial console program (e.g., ``screen``) to open the serial port with the correct settings:
 
   .. code-block::
 
@@ -253,7 +254,7 @@ Follow these steps to test the UART connection:
 4. Connect the TX, RX, and GND pins from the UART adapter to the corresponding UART header on the VF2 board.
    Refer to the diagram below for the correct wiring:
 
-   .. image:: images/UART.png  #TODO
+   .. image:: /images/UART.png
 
 5. Power on the VF2. Once booted, try typing on your keyboard.
    You should see the characters echoed back in your serial console.
