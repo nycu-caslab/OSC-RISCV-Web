@@ -1,6 +1,3 @@
-.. note::
-  The content marked as ``#TODO`` is still under review and will be finalized in the next update.
-
 ========================
 Lab 0: Environment Setup
 ========================
