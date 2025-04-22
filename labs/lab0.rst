@@ -125,9 +125,9 @@ you can save the provided linker script as ``linker.ld``, and run the following 
 From ELF to Kernel Image
 ########################
 
-VF2's bootloader cannot load ELF files.
-Hence, you need to convert the ELF file to a raw binary image.
-You can use ``objcopy`` to convert ELF files to raw binary.
+The OS kernel is initially compiled as an ELF file.
+We typically convert it into a raw binary image to prepare it for inclusion in a FIT image.
+This can be done using ``objcopy``:
 
 .. code-block:: 
 
