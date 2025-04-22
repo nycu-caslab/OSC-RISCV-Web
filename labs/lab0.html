@@ -476,9 +476,9 @@ You can use <code class="docutils literal notranslate"><span class="pre">objcopy
 <h2>Deploy to REAL VF2<a class="headerlink" href="#deploy-to-real-vf2" title="Link to this heading">#</a></h2>
 <section id="from-kernel-image-to-fit-image">
 <h3>From Kernel Image to FIT Image<a class="headerlink" href="#from-kernel-image-to-fit-image" title="Link to this heading">#</a></h3>
-<p>The bootloader on VF2 does not accept ELF or raw kernel binaries directly.
-Instead, it uses a Flattened Image Tree (FIT) format, which bundles together the kernel image,
-device tree blob (DTB), and optionally an initramfs into a single file.</p>
+<p>The bootloader on the VF2 board does not typically boot ELF or raw kernel binaries directly.
+Instead, it expects a single file in the Flattened Image Tree (FIT) format, which packages the kernel image,
+the device tree blob (DTB), and optionally an initramfs.</p>
 <p>To generate a FIT image, you will need the <cite>mkimage</cite> tool, which is part of the <cite>u-boot-tools</cite> package.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">u</span><span class="o">-</span><span class="n">boot</span><span class="o">-</span><span class="n">tools</span>
 </pre></div>
