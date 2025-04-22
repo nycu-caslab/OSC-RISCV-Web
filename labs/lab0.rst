@@ -153,9 +153,9 @@ Deploy to REAL VF2
 From Kernel Image to FIT Image
 ##############################
 
-The bootloader on VF2 does not accept ELF or raw kernel binaries directly.
-Instead, it uses a Flattened Image Tree (FIT) format, which bundles together the kernel image,
-device tree blob (DTB), and optionally an initramfs into a single file.
+The bootloader on the VF2 board does not typically boot ELF or raw kernel binaries directly.
+Instead, it expects a single file in the Flattened Image Tree (FIT) format, which packages the kernel image,
+the device tree blob (DTB), and optionally an initramfs.
 
 To generate a FIT image, you will need the `mkimage` tool, which is part of the `u-boot-tools` package.
 
