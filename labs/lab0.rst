@@ -126,8 +126,8 @@ From ELF to Kernel Image
 ########################
 
 The OS kernel is initially compiled as an ELF file.
-We typically convert it into a raw binary image to prepare it for inclusion in a FIT image.
-This can be done using ``objcopy``:
+To make it suitable for booting, we typically convert it into a raw binary image using ``objcopy``.
+This binary image can then be included as part of a Flattened Image Tree (FIT) for use by the bootloader.
 
 .. code-block:: 
 
