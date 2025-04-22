@@ -453,9 +453,9 @@ you can save the provided linker script as <code class="docutils literal notrans
 </section>
 <section id="from-elf-to-kernel-image">
 <h3>From ELF to Kernel Image<a class="headerlink" href="#from-elf-to-kernel-image" title="Link to this heading">#</a></h3>
-<p>VF2’s bootloader cannot load ELF files.
-Hence, you need to convert the ELF file to a raw binary image.
-You can use <code class="docutils literal notranslate"><span class="pre">objcopy</span></code> to convert ELF files to raw binary.</p>
+<p>The OS kernel is initially compiled as an ELF file.
+We typically convert it into a raw binary image to prepare it for inclusion in a FIT image.
+This can be done using <code class="docutils literal notranslate"><span class="pre">objcopy</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">riscv64</span><span class="o">-</span><span class="n">unknown</span><span class="o">-</span><span class="n">elf</span><span class="o">-</span><span class="n">objcopy</span> <span class="o">-</span><span class="n">O</span> <span class="n">binary</span> <span class="n">kernel</span><span class="o">.</span><span class="n">elf</span> <span class="n">kernel</span><span class="o">.</span><span class="n">bin</span>
 </pre></div>
 </div>
