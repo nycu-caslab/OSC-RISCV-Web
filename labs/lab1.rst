@@ -99,18 +99,42 @@ identifies complete commands, and prints the corresponding output.
 Basic Exercise 4 - System Information - 25%
 ############################################
 
-Interacting with low-level hardware is a fundamental part of bare-metal programming.
+Interacting with low-level system firmware is a key aspect of bare-metal development on RISC-V platforms.
 
-In this exercise, you will retrieve and display basic system information from the VF2 board,
-such as board revision and memory layout. This helps you understand how to read from
-hardware-defined memory locations or control registers, and how to format the output for human-readable display.
+In this exercise, you will implement a general-purpose SBI (Supervisor Binary Interface) call wrapper and use it to query basic system information from OpenSBI. This includes retrieving the current hardware thread ID (hart ID) and the OpenSBI version specification.
 
-At minimum, your shell should be able to display the following information:
+You will:
+	•	Implement the ``sbi_ecall(...)`` function in C using inline assembly.
+	•	Use the RISC-V standard extension SBI_EXT_BASE to obtain:
+	•	Current hart ID
+	•	OpenSBI spec version
+	•	Integrate the results into your shell (e.g., via info command).
 
-- Board revision
-- Base address and size of system memory
+SBI Call Design
+========================
+
+OpenSBI exposes system services to supervisor-mode software through a standardized calling convention using the ecall instruction.
+
+You will implement a generic function:
+
+.. code-block:: sbi_ecall
+
+    struct sbiret sbi_ecall(int ext, int fid,
+                            unsigned long arg0,
+                            unsigned long arg1,
+                            unsigned long arg2,
+                            unsigned long arg3,
+                            unsigned long arg4,
+                            unsigned long arg5);
+
+
+This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0–a7), executes an ecall, and retrieves the result from registers a0 (error code) and a1 (value).
 
 .. admonition:: Todo
 
-    Implement functionality to retrieve and display the VF2's hardware information.
-    You should at least print the board revision, and the base address and size of system memory.
+    Implement ``sbi_ecall(...)`` using inline assembly.  
+    Test it by calling the following SBI functions with extension ID ``0x10`` (SBI_EXT_BASE):
+
+    - Function ID ``0x0``: ``sbi_get_spec_version()`` → returns OpenSBI version
+    - Function ID ``0x1``: ``sbi_get_impl_id()`` → returns implementation ID
+    - Function ID ``0x2``: ``sbi_get_impl_version()`` → returns implementation versione
