@@ -156,6 +156,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Lab 0: Environment Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lab1.html">Lab 1: Hello World</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab2.html">Lab 2: Booting</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -324,6 +325,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-on-qemu">Check on QEMU</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#check-hardware-switches">Check Hardware Switches</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deploy-to-real-vf2">Deploy to REAL VF2</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-kernel-image-to-fit-image">From Kernel Image to FIT Image</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flash-bootable-image-to-sd-card">Flash Bootable Image to SD Card</a></li>
@@ -356,9 +358,9 @@ You should install the required toolchain and use it to build a bootable image f
 <section id="goals-of-this-lab">
 <h2>Goals of this lab<a class="headerlink" href="#goals-of-this-lab" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Set up the development environment.</p></li>
-<li><p>Understand the basics of cross-platform development.</p></li>
-<li><p>Verify the functionality of your VF2 board.</p></li>
+<li><p>Install the RISC-V toolchain and emulator on your host system.</p></li>
+<li><p>Learn the fundamentals of cross-platform bare-metal development.</p></li>
+<li><p>Build and boot a minimal kernel image on QEMU and VF2.</p></li>
 </ul>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -370,6 +372,13 @@ Skipping them may result in difficulties later on.</p>
 </section>
 <section id="cross-platform-development">
 <h2>Cross-Platform Development<a class="headerlink" href="#cross-platform-development" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This lab is designed and tested primarily on Linux-based systems.
+While it may be possible to perform the tasks on other platforms (e.g., macOS or Windows with additional setup),
+such environments are not officially supported for now and may introduce unexpected issues.
+Please proceed with caution if you choose to use a non-Linux environment, and be aware that TA assistance may be limited in such cases.</p>
+</div>
 <section id="cross-compiler">
 <h3>Cross Compiler<a class="headerlink" href="#cross-compiler" title="Link to this heading">#</a></h3>
 <p>VF2 uses the StarFive JH-7110 System-on-Chip (SoC) with a 64-bit RISC-V processor.
@@ -380,13 +389,6 @@ on a non-RISC-V environment.</p>
 <p>Install the cross compiler <code class="docutils literal notranslate"><span class="pre">gcc-riscv64-unknown-elf</span></code> on your host computer.</p>
 <p>It is recommended to install it using a package managers like <code class="docutils literal notranslate"><span class="pre">apt</span></code>.
 Alternatively, you can build it from source following the instructions provided by the <a class="reference external" href="https://github.com/riscv-collab/riscv-gnu-toolchain">RISC-V GNU Toolchain project</a> if needed.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This lab is designed and tested primarily on Linux-based systems.
-While it may be possible to perform the tasks on other platforms (e.g., macOS or Windows with additional setup),
-such environments are not officially supported for now and may introduce unexpected issues.
-Please proceed with caution if you choose to use a non-Linux environment, and be aware that TA assistance may be limited in such cases.</p>
 </div>
 </section>
 <section id="linker">
@@ -470,7 +472,27 @@ This binary image can then be included as part of a Flattened Image Tree (FIT) f
 <p class="admonition-title">Todo</p>
 <p>Build your first kernel image, and check it on QEMU.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although QEMU is convenient for early-stage testing, it does not emulate many VF2-specific devices.
+Do not assume success in QEMU guarantees correct behavior on hardware.</p>
+</div>
 </section>
+</section>
+<section id="check-hardware-switches">
+<h2>Check Hardware Switches<a class="headerlink" href="#check-hardware-switches" title="Link to this heading">#</a></h2>
+<p>Before booting the VF2 board, ensure that the on-board DIP switches are set to boot from the SD card (<code class="docutils literal notranslate"><span class="pre">SDIO3.0</span></code> mode). The switch configuration should be:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RGPIO_1</span></code>: <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">(Low</span> <span class="pre">Level)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RGPIO_0</span></code>: <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">(High</span> <span class="pre">Level)</span></code></p></li>
+</ul>
+<a class="reference internal image-reference" href="../_images/BootModeSettingLocation.jpeg"><img alt="Switches" class="align-center" src="../_images/BootModeSettingLocation.jpeg" style="width: 400px;" />
+</a>
+<p>Refer to the <a class="reference external" href="https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/JH7110_Boot_UG.pdf">Boot User Guide</a> for more information about available boot modes and switch settings.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Incorrect switch settings may cause the board to boot in a mode that prevents it from starting properly.</p>
+</div>
 </section>
 <section id="deploy-to-real-vf2">
 <h2>Deploy to REAL VF2<a class="headerlink" href="#deploy-to-real-vf2" title="Link to this heading">#</a></h2>
@@ -488,9 +510,43 @@ the contents and layout of the resulting FIT image. This file must reference the
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">kernel.bin</span></code> – the raw kernel image generated earlier</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">jh7110-starfive-visionfive-2-v1.3b.dtb</span></code> – the device tree for VF2</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">initramfs.cpio</span></code> – an optional root filesystem archive (not included in this lab; make sure to remove the corresponding section from the <code class="docutils literal notranslate"><span class="pre">.its</span></code> file to avoid errors)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">initramfs.cpio</span></code> – an optional root filesystem archive or initial <code class="docutils literal notranslate"><span class="pre">ramdisk</span></code> (not included in this lab; it will be introduced in a later lab. Be sure to remove the corresponding section from the <code class="docutils literal notranslate"><span class="pre">.its</span></code> file for now to avoid build errors)</p></li>
 </ul>
-<p>The required DTB file can be <a class="reference external" href="https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/jh7110-starfive-visionfive-2-v1.3b.dtb">downloaded</a> from the course resource page.</p>
+<p>Below is a minimal example of a valid <code class="docutils literal notranslate"><span class="pre">kernel.its</span></code> file that includes only the kernel and device tree:</p>
+<div class="highlight-dts notranslate"><div class="highlight"><pre><span></span><span class="cp">/dts-v1/</span><span class="p">;</span>
+
+<span class="nf">/</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Minimal FIT Image&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="nf">images</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nf">kernel</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cp">/incbin/(&quot;kernel.bin&quot;)</span><span class="p">;</span>
+<span class="w">            </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;kernel&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">arch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;riscv&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">os</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;linux&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">compression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">load</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mh">0x0</span><span class="w"> </span><span class="mh">0x40200000</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mh">0x0</span><span class="w"> </span><span class="mh">0x40200000</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">        </span><span class="nf">fdt</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cp">/incbin/(&quot;jh7110-starfive-visionfive-2-v1.3b.dtb&quot;)</span><span class="p">;</span>
+<span class="w">            </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;flat_dt&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">arch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;riscv&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">compression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">load</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mh">0x0</span><span class="w"> </span><span class="mh">0x46000000</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">        </span><span class="o">#</span><span class="w"> </span><span class="na">ramdisk</span><span class="w"> </span><span class="na">section</span><span class="w"> </span><span class="na">can</span><span class="w"> </span><span class="na">be</span><span class="w"> </span><span class="na">inserted</span><span class="w"> </span><span class="na">here</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="nf">configurations</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;conf&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="nf">conf</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">kernel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;kernel&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">fdt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;fdt&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The required device tree file can be <a class="reference external" href="https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/jh7110-starfive-visionfive-2-v1.3b.dtb">downloaded</a> from the course resource page.</p>
 <p>Once the required files and the <code class="docutils literal notranslate"><span class="pre">kernel.its</span></code> configuration are prepared,
 use the following command to generate the final FIT image:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkimage</span> <span class="o">-</span><span class="n">f</span> <span class="n">src</span><span class="o">/</span><span class="n">kernel</span><span class="o">.</span><span class="n">its</span> <span class="n">kernel</span><span class="o">.</span><span class="n">fit</span>
@@ -660,6 +716,7 @@ You can insert serial print statements to trace control flow or variable values.
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-on-qemu">Check on QEMU</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#check-hardware-switches">Check Hardware Switches</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deploy-to-real-vf2">Deploy to REAL VF2</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-kernel-image-to-fit-image">From Kernel Image to FIT Image</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flash-bootable-image-to-sd-card">Flash Bootable Image to SD Card</a></li>

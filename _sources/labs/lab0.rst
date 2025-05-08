@@ -12,9 +12,9 @@ You should install the required toolchain and use it to build a bootable image f
 Goals of this lab
 *****************
 
-* Set up the development environment.
-* Understand the basics of cross-platform development.
-* Verify the functionality of your VF2 board.
+* Install the RISC-V toolchain and emulator on your host system.
+* Learn the fundamentals of cross-platform bare-metal development.
+* Build and boot a minimal kernel image on QEMU and VF2.
 
 .. important::
   This lab is an introductory exercise.
@@ -25,6 +25,13 @@ Goals of this lab
 ***************************
 Cross-Platform Development
 ***************************
+
+.. note::
+  This lab is designed and tested primarily on Linux-based systems.
+  While it may be possible to perform the tasks on other platforms (e.g., macOS or Windows with additional setup),
+  such environments are not officially supported for now and may introduce unexpected issues.
+  Please proceed with caution if you choose to use a non-Linux environment, and be aware that TA assistance may be limited in such cases.
+
 
 Cross Compiler
 ##############
@@ -40,11 +47,6 @@ on a non-RISC-V environment.
     It is recommended to install it using a package managers like ``apt``. 
     Alternatively, you can build it from source following the instructions provided by the `RISC-V GNU Toolchain project <https://github.com/riscv-collab/riscv-gnu-toolchain>`_ if needed.
 
-.. note::
-  This lab is designed and tested primarily on Linux-based systems.
-  While it may be possible to perform the tasks on other platforms (e.g., macOS or Windows with additional setup),
-  such environments are not officially supported for now and may introduce unexpected issues.
-  Please proceed with caution if you choose to use a non-Linux environment, and be aware that TA assistance may be limited in such cases.
   
 Linker
 ######
@@ -146,6 +148,29 @@ After building, you can use QEMU to see the dumped assembly.
 
     Build your first kernel image, and check it on QEMU.
 
+.. note::
+   Although QEMU is convenient for early-stage testing, it does not emulate many VF2-specific devices.
+   Do not assume success in QEMU guarantees correct behavior on hardware.
+
+************************
+Check Hardware Switches
+************************
+
+Before booting the VF2 board, ensure that the on-board DIP switches are set to boot from the SD card (``SDIO3.0`` mode). The switch configuration should be:
+
+* ``RGPIO_1``: ``0 (Low Level)``  
+* ``RGPIO_0``: ``1 (High Level)``
+
+.. image:: /images/BootModeSettingLocation.jpeg
+   :width: 400px
+   :align: center
+   :alt: Switches
+
+Refer to the `Boot User Guide <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/JH7110_Boot_UG.pdf>`_ for more information about available boot modes and switch settings.
+
+.. warning::
+   Incorrect switch settings may cause the board to boot in a mode that prevents it from starting properly.
+
 *******************
 Deploy to REAL VF2
 *******************
@@ -168,9 +193,46 @@ the contents and layout of the resulting FIT image. This file must reference the
 
 * ``kernel.bin`` – the raw kernel image generated earlier
 * ``jh7110-starfive-visionfive-2-v1.3b.dtb`` – the device tree for VF2
-* ``initramfs.cpio`` – an optional root filesystem archive (not included in this lab; make sure to remove the corresponding section from the ``.its`` file to avoid errors)
+* ``initramfs.cpio`` – an optional root filesystem archive or initial ``ramdisk`` (not included in this lab; it will be introduced in a later lab. Be sure to remove the corresponding section from the ``.its`` file for now to avoid build errors)
 
-The required DTB file can be `downloaded <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/jh7110-starfive-visionfive-2-v1.3b.dtb>`_ from the course resource page.
+Below is a minimal example of a valid ``kernel.its`` file that includes only the kernel and device tree:
+
+.. code-block:: dts
+
+    /dts-v1/;
+
+    / {
+        description = "Minimal FIT Image";
+        images {
+            kernel {
+                data = /incbin/("kernel.bin");
+                type = "kernel";
+                arch = "riscv";
+                os = "linux";
+                compression = "none";
+                load = <0x0 0x40200000>;
+                entry = <0x0 0x40200000>;
+            };
+            fdt {
+                data = /incbin/("jh7110-starfive-visionfive-2-v1.3b.dtb");
+                type = "flat_dt";
+                arch = "riscv";
+                compression = "none";
+                load = <0x0 0x46000000>;
+            };
+            # ramdisk section can be inserted here
+        };
+        configurations {
+            default = "conf";
+            conf {
+                kernel = "kernel";
+                fdt = "fdt";
+            };
+        };
+    };
+
+
+The required device tree file can be `downloaded <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/jh7110-starfive-visionfive-2-v1.3b.dtb>`_ from the course resource page.
 
 Once the required files and the ``kernel.its`` configuration are prepared,
 use the following command to generate the final FIT image:

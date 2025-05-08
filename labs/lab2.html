@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Lab 1: Hello World &#8212; CSIC30016: Operating System Capstone</title>
+    <title>Lab 2: Booting &#8212; CSIC30016: Operating System Capstone</title>
   
   
   
@@ -40,11 +40,11 @@
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'labs/lab1';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'labs/lab2';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Lab 2: Booting" href="lab2.html" />
-    <link rel="prev" title="Lab 0: Environment Setup" href="lab0.html" />
+    <link rel="next" title="External Resourses" href="../references/external_resources.html" />
+    <link rel="prev" title="Lab 1: Hello World" href="lab1.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -155,8 +155,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Labs:</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="lab0.html">Lab 0: Environment Setup</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Lab 1: Hello World</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lab2.html">Lab 2: Booting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lab1.html">Lab 1: Hello World</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Lab 2: Booting</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References:</span></p>
 <ul class="nav bd-sidenav">
@@ -216,7 +216,7 @@
       
       
       
-      <li><a href="../_sources/labs/lab1.rst" target="_blank"
+      <li><a href="../_sources/labs/lab2.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -300,7 +300,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Lab 1: Hello World</h1>
+    <h1>Lab 2: Booting</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -312,14 +312,15 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#goals-of-this-lab">Goals of this lab</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercises">Basic Exercises</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-1-basic-initialization-25">Basic Exercise 1 - Basic Initialization - 25%</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-2-uart-setup-25">Basic Exercise 2 - UART Setup - 25%</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-3-simple-shell-25">Basic Exercise 3 - Simple Shell - 25%</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-4-system-information-25">Basic Exercise 4 - System Information - 25%</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sbi-call-design">SBI Call Design</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-1-uart-bootloader-30">Basic Exercise 1 - UART Bootloader - 30%</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-2-initial-ramdisk-30">Basic Exercise 2 - Initial Ramdisk - 30%</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-3-bootloader-self-relocation-20">Basic Exercise 3 - Bootloader Self-Relocation - 20%</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercises">Advanced Exercises</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercise-device-tree-30">Advanced Exercise - Device Tree - 30%</a></li>
 </ul>
 </li>
 </ul>
@@ -338,123 +339,112 @@ document.write(`
 <p>This document is currently under construction and may be incomplete or subject to significant changes.
 Please check back later for updates, and consult the instructor if you are unsure about any missing parts.</p>
 </div>
-<section id="lab-1-hello-world">
-<h1>Lab 1: Hello World<a class="headerlink" href="#lab-1-hello-world" title="Link to this heading">#</a></h1>
+<section id="lab-2-booting">
+<h1>Lab 2: Booting<a class="headerlink" href="#lab-2-booting" title="Link to this heading">#</a></h1>
 <section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
-<p>In this lab, you will begin practicing bare-metal programming on the VF2 board by implementing a minimal interactive shell.</p>
-<p>This lab focuses on configuring the Universal Asynchronous Receiver-Transmitter (UART) interface for serial communication,
-which serves as the primary I/O channel between your host computer and the VF2 during development.
-You will also gain experience in low-level system initialization, peripheral access, and basic input/output handling.</p>
+<p>Booting is the process of initializing the system environment to run various user programs after a computer reset. This includes loading the kernel, initializing subsystems, matching device drivers, and launching the initial user program to bring up remaining services in user space.</p>
+<p>In Lab 2, you’ll implement a bootloader for the VF2 board that loads kernel images through UART. Additionally, you’ll develop a simple allocator and gain an understanding of initial ramdisk and device trees.</p>
 </section>
 <section id="goals-of-this-lab">
 <h2>Goals of this lab<a class="headerlink" href="#goals-of-this-lab" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Practice bare-metal programming.</p></li>
-<li><p>Understand how to access VF2’s peripherals.</p></li>
-<li><p>Set up UART for serial communication.</p></li>
+<li><p>Implement a bootloader that loads kernel images through UART.</p></li>
+<li><p>Implement a simple memory allocator.</p></li>
+<li><p>Understand the concept and usage of initial ramdisk.</p></li>
+<li><p>Understand the structure and purpose of device trees.</p></li>
 </ul>
+</section>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading">#</a></h2>
+<p>The boot process on the VF2 involves multiple stages, including the execution of the bootloader, loading of the kernel, and initialization of system components. Understanding this process is crucial for developing low-level system software.</p>
+<p>In this lab, you’ll implement a bootloader that loads the actual kernel through UART, providing flexibility during development and debugging.</p>
 </section>
 <section id="basic-exercises">
 <h2>Basic Exercises<a class="headerlink" href="#basic-exercises" title="Link to this heading">#</a></h2>
-<section id="basic-exercise-1-basic-initialization-25">
-<h3>Basic Exercise 1 - Basic Initialization - 25%<a class="headerlink" href="#basic-exercise-1-basic-initialization-25" title="Link to this heading">#</a></h3>
-<p>When a bare-metal program is loaded onto the VF2, several conditions must be satisfied
-before it can execute correctly:</p>
-<ul class="simple">
-<li><p>All data sections must be placed at the expected memory addresses.</p></li>
-<li><p>The program counter must point to the correct entry address.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">.bss</span></code> segment (which holds uninitialized global variables) must be zero-initialized.</p></li>
-<li><p>The stack pointer must be set to a valid memory location.</p></li>
-</ul>
-<p>During boot, VF2’s bootloader loads the kernel image into a designated physical address
-and begins execution from there. If your linker script is correct, the first two conditions
-are already handled.</p>
-<p>However, the <code class="docutils literal notranslate"><span class="pre">.bss</span></code> segment and the stack pointer are not initialized automatically.
-Failing to configure them properly can lead to undefined behavior, such as corrupted memory or crashes.</p>
+<section id="basic-exercise-1-uart-bootloader-30">
+<h3>Basic Exercise 1 - UART Bootloader - 30%<a class="headerlink" href="#basic-exercise-1-uart-bootloader-30" title="Link to this heading">#</a></h3>
+<p>Loading the kernel image onto the VF2 board can be streamlined by implementing a bootloader that receives the kernel over UART. This eliminates the need to physically move storage media between the host and the VF2 during development.</p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
-<p>Initialize the system state immediately after the bootloader hands control to your program.
-This includes setting up the stack pointer and zeroing out the <code class="docutils literal notranslate"><span class="pre">.bss</span></code> segment manually.</p>
+<p>Develop a bootloader that listens for a kernel image transmitted over UART and loads it into memory for execution. Design a simple protocol for data transmission to ensure reliability.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The bootloader should be initially loaded at address <code class="docutils literal notranslate"><span class="pre">0x40200000</span></code>, which is the expected entry point for first-stage code on the VF2 board.</p>
+<p>To avoid memory conflicts with the kernel and the initial ramdisk, it is recommended to relocate the bootloader—after the kernel has been loaded—to a safe region such as <code class="docutils literal notranslate"><span class="pre">0x40100000</span></code> (before the kernel), or alternatively to a higher address such as <code class="docutils literal notranslate"><span class="pre">0x46200000</span></code> (after the ramdisk, depending on the size of your <code class="docutils literal notranslate"><span class="pre">initrd</span></code>), provided that the region remains free for kernel or runtime use.</p>
+<p>See <em>Basic Exercise 3</em> for relocation implementation details.</p>
 </div>
 </section>
-<section id="basic-exercise-2-uart-setup-25">
-<h3>Basic Exercise 2 - UART Setup - 25%<a class="headerlink" href="#basic-exercise-2-uart-setup-25" title="Link to this heading">#</a></h3>
-<p>For all labs in this course, UART will be the primary interface for communication between the VF2 and your host computer.
-You will use it to read input, print output, and interact with the system while debugging.</p>
-<p>In this exercise, you will configure the UART peripheral by directly writing to its memory-mapped registers.
-This includes setting the baud rate, data format, and enabling both the transmitter and receiver.</p>
-<p>Refer to the VF2’s hardware documentation for details on the base address and layout of the UART registers.</p>
+<section id="basic-exercise-2-initial-ramdisk-30">
+<h3>Basic Exercise 2 - Initial Ramdisk - 30%<a class="headerlink" href="#basic-exercise-2-initial-ramdisk-30" title="Link to this heading">#</a></h3>
+<p>An initial ramdisk (initrd) is a temporary root file system loaded into memory during the boot process. It provides essential files and drivers needed to mount the actual root file system.</p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
-<p>Set up the UART interface on VF2.
-This includes configuring the UART registers to initialize the baud rate, data bits, stop bits,
-and enabling both the transmitter and receiver.</p>
+<p>Create an initial ramdisk containing necessary utilities and drivers for the VF2. Modify the bootloader to load this initrd into memory during the boot process.</p>
 </div>
-</section>
-<section id="basic-exercise-3-simple-shell-25">
-<h3>Basic Exercise 3 - Simple Shell - 25%<a class="headerlink" href="#basic-exercise-3-simple-shell-25" title="Link to this heading">#</a></h3>
-<p>Once UART is configured correctly, you can build a simple shell interface
-to enable basic interaction between the VF2 and your host computer.</p>
-<p>The shell should process user input received via UART and respond with predefined messages.
-At minimum, it must support the following commands:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">help</span></code>: Display a list of available commands.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">hello</span></code>: Display the message “Hello World!”</p></li>
-</ul>
-<p>You may implement a simple command parser that reads input character by character,
-identifies complete commands, and prints the corresponding output.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Be mindful of character alignment issues when handling screen I/O.
-Consider translating newline characters (<cite>n</cite>) into carriage return + newline (<cite>rn</cite>)
-to ensure proper display across different serial terminals.</p>
-</div>
-<div class="admonition-todo admonition">
-<p class="admonition-title">Todo</p>
-<p>Implement a basic shell that reads input from UART and displays output accordingly.
-The shell should recognize the listed commands and print appropriate responses.</p>
-</div>
-</section>
-<section id="basic-exercise-4-system-information-25">
-<h3>Basic Exercise 4 - System Information - 25%<a class="headerlink" href="#basic-exercise-4-system-information-25" title="Link to this heading">#</a></h3>
-<p>Interacting with low-level system firmware is a key aspect of bare-metal development on RISC-V platforms.</p>
-<p>In this exercise, you will implement a general-purpose SBI (Supervisor Binary Interface) call wrapper and use it to query basic system information from OpenSBI. This includes retrieving the current hardware thread ID (hart ID) and the OpenSBI version specification.</p>
-<dl class="simple">
-<dt>You will:</dt><dd><ul class="simple">
-<li><p>Implement the <code class="docutils literal notranslate"><span class="pre">sbi_ecall(...)</span></code> function in C using inline assembly.</p></li>
-<li><p>Use the RISC-V standard extension SBI_EXT_BASE to obtain:</p></li>
-<li><p>Current hart ID</p></li>
-<li><p>OpenSBI spec version</p></li>
-<li><p>Integrate the results into your shell (e.g., via info command).</p></li>
-</ul>
-</dd>
-</dl>
-<section id="sbi-call-design">
-<h4>SBI Call Design<a class="headerlink" href="#sbi-call-design" title="Link to this heading">#</a></h4>
-<p>OpenSBI exposes system services to supervisor-mode software through a standardized calling convention using the ecall instruction.</p>
-<p>You will implement a generic function:</p>
-<div class="highlight-sbi_ecall notranslate"><div class="highlight"><pre><span></span>struct sbiret sbi_ecall(int ext, int fid,
-                        unsigned long arg0,
-                        unsigned long arg1,
-                        unsigned long arg2,
-                        unsigned long arg3,
-                        unsigned long arg4,
-                        unsigned long arg5);
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Modified <code class="docutils literal notranslate"><span class="pre">kernel.its</span></code> with ramdisk section (simplified)</span><a class="headerlink" href="#id1" title="Link to this code">#</a></div>
+<div class="highlight-dts notranslate"><div class="highlight"><pre><span></span><span class="cp">/dts-v1/</span><span class="p">;</span>
+
+<span class="nf">/</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;FIT Image with Kernel, Initrd, and DTB&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="nf">images</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nf">kernel</span><span class="cm"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">};</span>
+<span class="w">        </span><span class="nf">fdt</span><span class="cm"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">};</span>
+<span class="w">        </span><span class="nf">ramdisk</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cp">/incbin/(&quot;initramfs.cpio&quot;)</span><span class="p">;</span>
+<span class="w">            </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ramdisk&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">arch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;riscv&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">os</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;linux&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">compression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">load</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mh">0x0</span><span class="w"> </span><span class="mh">0x46100000</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">};</span>
+
+<span class="w">    </span><span class="nf">configurations</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;conf&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="nf">conf</span><span class="cm"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">kernel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;kernel&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">fdt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;fdt&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="n">ramdisk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ramdisk&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">};</span>
 </pre></div>
 </div>
-<p>This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0–a7), executes an ecall, and retrieves the result from registers a0 (error code) and a1 (value).</p>
-<div class="admonition-todo admonition">
-<p class="admonition-title">Todo</p>
-<p>Implement <code class="docutils literal notranslate"><span class="pre">sbi_ecall(...)</span></code> using inline assembly.
-Test it by calling the following SBI functions with extension ID <code class="docutils literal notranslate"><span class="pre">0x10</span></code> (SBI_EXT_BASE):</p>
-<ul class="simple">
-<li><p>Function ID <code class="docutils literal notranslate"><span class="pre">0x0</span></code>: <code class="docutils literal notranslate"><span class="pre">sbi_get_spec_version()</span></code> → returns OpenSBI version</p></li>
-<li><p>Function ID <code class="docutils literal notranslate"><span class="pre">0x1</span></code>: <code class="docutils literal notranslate"><span class="pre">sbi_get_impl_id()</span></code> → returns implementation ID</p></li>
-<li><p>Function ID <code class="docutils literal notranslate"><span class="pre">0x2</span></code>: <code class="docutils literal notranslate"><span class="pre">sbi_get_impl_version()</span></code> → returns implementation versione</p></li>
-</ul>
 </div>
 </section>
+<section id="basic-exercise-3-bootloader-self-relocation-20">
+<h3>Basic Exercise 3 - Bootloader Self-Relocation - 20%<a class="headerlink" href="#basic-exercise-3-bootloader-self-relocation-20" title="Link to this heading">#</a></h3>
+<p>To accommodate different memory layouts and ensure compatibility, a bootloader may need to relocate itself during execution.</p>
+<div class="admonition-todo admonition">
+<p class="admonition-title">Todo</p>
+<p>Modify the bootloader to support self-relocation, allowing it to move to a different memory region if necessary.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When relocating the bootloader, make sure the destination region does not overlap with the currently loaded kernel or the initrd image. A typical memory layout might look like this:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0x40200000</span></code> – Bootloader (original location)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x40100000</span></code> – Bootloader relocated copy</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x40200000</span></code> – Kernel image</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x46000000</span></code> – Device Tree Blob (DTB)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x46100000</span></code> – Initrd</p></li>
+</ul>
+<p>You may need to consult the linker script and adjust memory layout if kernel image is large or if <code class="docutils literal notranslate"><span class="pre">initrd</span></code> placement needs adjustment.</p>
+</div>
+</section>
+</section>
+<section id="advanced-exercises">
+<h2>Advanced Exercises<a class="headerlink" href="#advanced-exercises" title="Link to this heading">#</a></h2>
+<section id="advanced-exercise-device-tree-30">
+<h3>Advanced Exercise - Device Tree - 30%<a class="headerlink" href="#advanced-exercise-device-tree-30" title="Link to this heading">#</a></h3>
+<p>A device tree is a data structure that describes the hardware components of a system. It provides the operating system with information about the available hardware without hardcoding details into the kernel.</p>
+<div class="admonition-todo admonition">
+<p class="admonition-title">Todo</p>
+<p>Integrate device tree support into your bootloader. Parse the device tree to initialize hardware components appropriately during the boot process.</p>
+</div>
 </section>
 </section>
 </section>
@@ -471,20 +461,20 @@ Test it by calling the following SBI functions with extension ID <code class="do
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="lab0.html"
+       href="lab1.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Lab 0: Environment Setup</p>
+        <p class="prev-next-title">Lab 1: Hello World</p>
       </div>
     </a>
     <a class="right-next"
-       href="lab2.html"
+       href="../references/external_resources.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Lab 2: Booting</p>
+        <p class="prev-next-title">External Resourses</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -506,14 +496,15 @@ Test it by calling the following SBI functions with extension ID <code class="do
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#goals-of-this-lab">Goals of this lab</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercises">Basic Exercises</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-1-basic-initialization-25">Basic Exercise 1 - Basic Initialization - 25%</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-2-uart-setup-25">Basic Exercise 2 - UART Setup - 25%</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-3-simple-shell-25">Basic Exercise 3 - Simple Shell - 25%</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-4-system-information-25">Basic Exercise 4 - System Information - 25%</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#sbi-call-design">SBI Call Design</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-1-uart-bootloader-30">Basic Exercise 1 - UART Bootloader - 30%</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-2-initial-ramdisk-30">Basic Exercise 2 - Initial Ramdisk - 30%</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-3-bootloader-self-relocation-20">Basic Exercise 3 - Bootloader Self-Relocation - 20%</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercises">Advanced Exercises</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercise-device-tree-30">Advanced Exercise - Device Tree - 30%</a></li>
 </ul>
 </li>
 </ul>
