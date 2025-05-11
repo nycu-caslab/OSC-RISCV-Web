@@ -218,7 +218,6 @@ Below is a minimal example of a valid ``kernel.its`` file that includes only the
                 type = "flat_dt";
                 arch = "riscv";
                 compression = "none";
-                load = <0x0 0x46000000>;
             };
             # ramdisk section can be inserted here
         };
