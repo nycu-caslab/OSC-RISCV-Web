@@ -137,7 +137,7 @@ To accommodate different memory layouts and ensure compatibility, a bootloader m
    You may need to consult the linker script and adjust memory layout if kernel image is large or if ``initrd`` placement needs adjustment.
 
 ********************
-Advanced Exercises
+Advanced Exercise
 ********************
 
 Advanced Exercise - Device Tree - 30%
