@@ -104,43 +104,7 @@ An initial ramdisk (initrd) is a temporary root file system loaded into memory d
    };
 
 
-
-.. Basic Exercise 4 - Simple Allocator - 10%
-.. ##########################################
-
-.. Efficient memory management is fundamental in operating systems. Implementing a simple memory allocator will provide insight into dynamic memory allocation strategies.
-
-.. .. admonition:: Todo
-
-..     Implement a basic memory allocator that manages dynamic memory allocation and deallocation for the kernel.
-
-
-Basic Exercise 3 - Bootloader Self-Relocation - 20%
-#######################################################
-
-To accommodate different memory layouts and ensure compatibility, a bootloader may need to relocate itself during execution.
-
-.. admonition:: Todo
-
-    Modify the bootloader to support self-relocation, allowing it to move to a different memory region if necessary.
-
-.. note::
-
-   When relocating the bootloader, make sure the destination region does not overlap with the currently loaded kernel or the initrd image. A typical memory layout might look like this:
-
-   - ``0x40200000`` – Bootloader (original location)
-   - ``0x40100000`` – Bootloader relocated copy
-   - ``0x40200000`` – Kernel image
-   - ``0x46000000`` – Device Tree Blob (DTB)
-   - ``0x46100000`` – Initrd
-
-   You may need to consult the linker script and adjust memory layout if kernel image is large or if ``initrd`` placement needs adjustment.
-
-********************
-Advanced Exercise
-********************
-
-Advanced Exercise - Device Tree - 30%
+Basic Exercise 3 - Device Tree - 30%
 #######################################
 
 A device tree is a data structure that describes the hardware components of a system. It provides the operating system with information about the available hardware without hardcoding details into the kernel.
@@ -148,3 +112,36 @@ A device tree is a data structure that describes the hardware components of a sy
 .. admonition:: Todo
 
     Integrate device tree support into your bootloader. Parse the device tree to initialize hardware components appropriately during the boot process.
+
+
+********************
+Advanced Exercise
+********************
+
+Advanced Exercise - Bootloader Self-Relocation - 20%
+#######################################################
+
+To accommodate different memory layouts and ensure compatibility, a bootloader may need to relocate itself during execution.
+
+.. admonition:: Todo
+
+    Modify the bootloader to support self-relocation, allowing it to move to a different memory region
+    according to the memory layout obtained from the devicetree.
+    
+.. note::
+
+   When relocating the bootloader, make sure the destination region does not overlap with 
+   the currently loaded kernel or the initrd image.
+   A typical memory layout might consider the addresses and sizes of 
+   `Bootloader`, `Kernel Image` to be loaded, 
+   `Device Tree Blog` (DTB) and `Initial Ramdisk` (``initrd``). 
+   You need to consult the devicetree to decide the memory layout and adjust the linker script
+   to properly decide the relocation process, especially if the ``initramfs.cpio`` you prepared is very large.
+   
+
+..    - ``0x40200000`` – Bootloader (original location)
+..    - ``0x40100000`` – Bootloader relocated copy
+..    - ``0x40200000`` – Kernel image
+..    - ``0x46000000`` – Device Tree Blob (DTB)
+..    - ``0x46100000`` – Initrd
+
