@@ -135,70 +135,73 @@ This function uses inline assembly to load arguments into the appropriate RISC-V
     Implement ``sbi_ecall(...)`` using inline assembly.  
     Test it by calling the following SBI functions with extension ID ``0x10`` (SBI_EXT_BASE):
 
-    - Function ID ``0x0``: ``sbi_get_spec_version()`` → returns OpenSBI version
-    - Function ID ``0x1``: ``sbi_get_impl_id()`` → returns implementation ID
-    - Function ID ``0x2``: ``sbi_get_impl_version()`` → returns implementation versione
+    - Function ID ``0x0``: ``sbi_get_spec_version()``: returns OpenSBI version
+    - Function ID ``0x1``: ``sbi_get_impl_id()``: returns implementation ID
+    - Function ID ``0x2``: ``sbi_get_impl_version()``: returns implementation version
 
-Device Tree-Based Info
-========================
+********************
+Advanced Exercise
+********************
 
-On most RISC-V platforms, including the VF2 board, the bootloader (such as U-Boot or OpenSBI)
-passes a Flattened Device Tree (DTB) to the kernel or bare-metal program.
-This DTB provides a structured description of the platform’s hardware components.
+Advanced Exercise: Device Tree-Based Info (10%)
+############################################
 
-Although full device tree parsing is complex and will be covered in detail in the next lab,
-in this exercise you will retrieve a few key fields using fixed property names.
-This allows you to begin using the device tree as a source of system configuration data
-without needing to understand its full structure yet.
+On most RISC-V platforms, including the VF2 board, a pre-installed firmware-level bootloader
+(such as OpenSBI or U-Boot) is responsible for early hardware initialization and for passing 
+a Flattened Device Tree (DTB) to the kernel or to a custom bare-metal program.
 
-This also provides a good opportunity to replace any hardcoded board-specific configuration
-values from Lab 0 with values extracted from the DTB. 
-Specifically, the following Lab 0 elements may now be replaced with device tree data:
-
-- The kernel load and entry address specified in ``kernel.its`` (e.g., ``0x40200000``)
-- The memory base address specified in the linker script (e.g., ``. = 0x80200000``)
-- Any future board-specific conditionals, which can be derived from the ``compatible`` string
-
-The ``compatible`` string is used to identify the target platform and is often consulted by both bootloaders and operating systems to apply board-specific configuration or initialization logic.
-
-Even though this lab explicitly targets the VF2 board, retrieving the ``compatible`` field helps illustrate how this value can be used in more general settings. For example:
-
-- A bootloader might match the ``compatible`` string to select the appropriate device initialization sequence.
-- A monolithic firmware image could branch based on ``compatible`` to support multiple boards (e.g., ``"starfive,visionfive-2"``, ``"sifive,unmatched"``, etc.).
-- A bare-metal project with modular startup routines may decide at runtime which memory map, peripheral drivers, or clock setup to activate.
-
-In production systems, this string is critical for device driver matching and dynamic hardware abstraction.
-
-.. note::
-
-    You may notice that the ``compatible`` property appears in many places across the device tree,
-    since it is commonly used to match both devices and board types.
-
-    For this lab, we are only interested in the ``compatible`` string associated with the **root node**.
-    According to the official `Device Tree Specification <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/devicetree-specification-v0.4.pdf>`_, the ``compatible`` string for the root node is guaranteed to appear near the very beginning
-    of the DTB structure block.
-    To simplify the task, you may scan the structure block starting from the offset specified by ``off_dt_struct``,
-    and extract the **first property tagged as ``compatible``**. This will safely correspond to the root node.
-
-    In the next lab, you will learn how to properly walk the tree and distinguish ``compatible`` properties
-    attached to other nodes.
-
-
+This DTB provides a structured description of the platform's hardware components. 
 It is assumed that the DTB pointer is passed in register ``a1`` during boot.
 You should store this value and use it as the starting point for your access functions.
 
+
 .. admonition:: Todo
 
-    Implement two simple accessors:
+    Implement a simple accessor function to:
 
-    - Extract the ``compatible`` string from the root node
-    - Extract the first 64-bit pair from ``/memory/reg`` (i.e., base address and size)
+    - Extract the ``model`` string from the root node
+    - Extract the UART base address from the ``reg`` property of the ``serial@10000000`` node
 
     Integrate these outputs into your ``info`` shell command alongside the SBI results.
 
+The device tree source file ``jh7110-starfive-visionfive-2-v1.3b.dts`` can be found
+in the official `StarFive Linux GitHub repository <https://github.com/starfive-tech/linux>`_.
+
+Although full device tree parsing is complex and will be covered in detail in the next lab,
+in this exercise you will retrieve a few key fields using fixed node and property names.
+This allows you to begin using the device tree as a source of system configuration data
+without needing to understand its full structure yet.
+
+The ``model`` property under the root node provides a human-readable description of the target board.
+It is commonly used in logs, diagnostics, and shell outputs to identify the hardware platform. 
+Even though this lab explicitly targets the VF2 board, retrieving the ``model`` field helps illustrate how
+hardware information can be extracted from the DTB for display and verification purposes. 
+
+This also provides a good opportunity to replace hardcoded board-specific configuration
+values from Lab 0 with values extracted from the DTB. 
+Specifically, the UART base address used to initialize the serial interface in Lab 0 
+may now be replaced with device tree data. The UART node is named ``serial@10000000``, and
+it contains a ``reg`` property that specifies the base address and size of the UART registers.
+
+The ``reg`` field declares the UART base address using a 64-bit format:
+
+    ``reg = <0x0 0x10000000 0x0 0x10000>;``
+
+To extract the base address, combine the first two words of the ``reg`` property. 
+You can refer to the `JH7110 UART Developing Guide <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/SDK_DG_UART.pdf>`_
+for more details.
+
+For additional reference, you may consult the following minimal DTB-parsing example ``fdtget.c``
+from `dgibson/dtc repository <https://github.com/dgibson/dtc/>`_. This code demonstrates how to locate a device node by path and retrieve a property using:
+
+- ``fdt_path_offset(fdt, "/path")``
+- ``fdt_getprop(fdt, offset, "property", &len)``
+
+While your implementation in this lab does not rely on the full device tree parsing capabilities,
+you may find it helpful to understand how to navigate the device tree structure.
+
 .. note::
 
-    You do not need to implement a full DTB parser for this exercise.  
-    You may use hardcoded offsets or minimal binary pattern matching to retrieve values from known locations in the DTB.
+    The ``model`` property is *optional* according to the device tree specification, while
+    it is typically present at the root node to provide a descriptive label for the board.
 
-    In the next lab, you will learn how to properly traverse and decode the device tree structure in a general and reusable way.
