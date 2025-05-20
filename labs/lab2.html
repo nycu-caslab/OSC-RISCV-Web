@@ -316,11 +316,11 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercises">Basic Exercises</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-1-uart-bootloader-30">Basic Exercise 1 - UART Bootloader - 30%</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-2-initial-ramdisk-30">Basic Exercise 2 - Initial Ramdisk - 30%</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-3-bootloader-self-relocation-20">Basic Exercise 3 - Bootloader Self-Relocation - 20%</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-3-device-tree-30">Basic Exercise 3 - Device Tree - 30%</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercise">Advanced Exercise</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercise-device-tree-30">Advanced Exercise - Device Tree - 30%</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercise-bootloader-self-relocation-20">Advanced Exercise - Bootloader Self-Relocation - 20%</a></li>
 </ul>
 </li>
 </ul>
@@ -415,35 +415,34 @@ Please check back later for updates, and consult the instructor if you are unsur
 </div>
 </div>
 </section>
-<section id="basic-exercise-3-bootloader-self-relocation-20">
-<h3>Basic Exercise 3 - Bootloader Self-Relocation - 20%<a class="headerlink" href="#basic-exercise-3-bootloader-self-relocation-20" title="Link to this heading">#</a></h3>
-<p>To accommodate different memory layouts and ensure compatibility, a bootloader may need to relocate itself during execution.</p>
+<section id="basic-exercise-3-device-tree-30">
+<h3>Basic Exercise 3 - Device Tree - 30%<a class="headerlink" href="#basic-exercise-3-device-tree-30" title="Link to this heading">#</a></h3>
+<p>A device tree is a data structure that describes the hardware components of a system. It provides the operating system with information about the available hardware without hardcoding details into the kernel.</p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
-<p>Modify the bootloader to support self-relocation, allowing it to move to a different memory region if necessary.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>When relocating the bootloader, make sure the destination region does not overlap with the currently loaded kernel or the initrd image. A typical memory layout might look like this:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">0x40200000</span></code> – Bootloader (original location)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">0x40100000</span></code> – Bootloader relocated copy</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">0x40200000</span></code> – Kernel image</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">0x46000000</span></code> – Device Tree Blob (DTB)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">0x46100000</span></code> – Initrd</p></li>
-</ul>
-<p>You may need to consult the linker script and adjust memory layout if kernel image is large or if <code class="docutils literal notranslate"><span class="pre">initrd</span></code> placement needs adjustment.</p>
+<p>Integrate device tree support into your bootloader. Parse the device tree to initialize hardware components appropriately during the boot process.</p>
 </div>
 </section>
 </section>
 <section id="advanced-exercise">
 <h2>Advanced Exercise<a class="headerlink" href="#advanced-exercise" title="Link to this heading">#</a></h2>
-<section id="advanced-exercise-device-tree-30">
-<h3>Advanced Exercise - Device Tree - 30%<a class="headerlink" href="#advanced-exercise-device-tree-30" title="Link to this heading">#</a></h3>
-<p>A device tree is a data structure that describes the hardware components of a system. It provides the operating system with information about the available hardware without hardcoding details into the kernel.</p>
+<section id="advanced-exercise-bootloader-self-relocation-20">
+<h3>Advanced Exercise - Bootloader Self-Relocation - 20%<a class="headerlink" href="#advanced-exercise-bootloader-self-relocation-20" title="Link to this heading">#</a></h3>
+<p>To accommodate different memory layouts and ensure compatibility, a bootloader may need to relocate itself during execution.</p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
-<p>Integrate device tree support into your bootloader. Parse the device tree to initialize hardware components appropriately during the boot process.</p>
+<p>Modify the bootloader to support self-relocation, allowing it to move to a different memory region
+according to the memory layout obtained from the devicetree.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When relocating the bootloader, make sure the destination region does not overlap with
+the currently loaded kernel or the initrd image.
+A typical memory layout might consider the addresses and sizes of
+<cite>Bootloader</cite>, <cite>Kernel Image</cite> to be loaded,
+<cite>Device Tree Blog</cite> (DTB) and <cite>Initial Ramdisk</cite> (<code class="docutils literal notranslate"><span class="pre">initrd</span></code>).
+You need to consult the devicetree to decide the memory layout and adjust the linker script
+to properly decide the relocation process, especially if the <code class="docutils literal notranslate"><span class="pre">initramfs.cpio</span></code> you prepared is very large.</p>
 </div>
 </section>
 </section>
@@ -500,11 +499,11 @@ Please check back later for updates, and consult the instructor if you are unsur
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercises">Basic Exercises</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-1-uart-bootloader-30">Basic Exercise 1 - UART Bootloader - 30%</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-2-initial-ramdisk-30">Basic Exercise 2 - Initial Ramdisk - 30%</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-3-bootloader-self-relocation-20">Basic Exercise 3 - Bootloader Self-Relocation - 20%</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-exercise-3-device-tree-30">Basic Exercise 3 - Device Tree - 30%</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercise">Advanced Exercise</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercise-device-tree-30">Advanced Exercise - Device Tree - 30%</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-exercise-bootloader-self-relocation-20">Advanced Exercise - Bootloader Self-Relocation - 20%</a></li>
 </ul>
 </li>
 </ul>
