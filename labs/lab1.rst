@@ -138,3 +138,67 @@ This function uses inline assembly to load arguments into the appropriate RISC-V
     - Function ID ``0x0``: ``sbi_get_spec_version()`` → returns OpenSBI version
     - Function ID ``0x1``: ``sbi_get_impl_id()`` → returns implementation ID
     - Function ID ``0x2``: ``sbi_get_impl_version()`` → returns implementation versione
+
+Device Tree-Based Info
+========================
+
+On most RISC-V platforms, including the VF2 board, the bootloader (such as U-Boot or OpenSBI)
+passes a Flattened Device Tree (DTB) to the kernel or bare-metal program.
+This DTB provides a structured description of the platform’s hardware components.
+
+Although full device tree parsing is complex and will be covered in detail in the next lab,
+in this exercise you will retrieve a few key fields using fixed property names.
+This allows you to begin using the device tree as a source of system configuration data
+without needing to understand its full structure yet.
+
+This also provides a good opportunity to replace any hardcoded board-specific configuration
+values from Lab 0 with values extracted from the DTB. 
+Specifically, the following Lab 0 elements may now be replaced with device tree data:
+
+- The kernel load and entry address specified in ``kernel.its`` (e.g., ``0x40200000``)
+- The memory base address specified in the linker script (e.g., ``. = 0x80200000``)
+- Any future board-specific conditionals, which can be derived from the ``compatible`` string
+
+The ``compatible`` string is used to identify the target platform and is often consulted by both bootloaders and operating systems to apply board-specific configuration or initialization logic.
+
+Even though this lab explicitly targets the VF2 board, retrieving the ``compatible`` field helps illustrate how this value can be used in more general settings. For example:
+
+- A bootloader might match the ``compatible`` string to select the appropriate device initialization sequence.
+- A monolithic firmware image could branch based on ``compatible`` to support multiple boards (e.g., ``"starfive,visionfive-2"``, ``"sifive,unmatched"``, etc.).
+- A bare-metal project with modular startup routines may decide at runtime which memory map, peripheral drivers, or clock setup to activate.
+
+In production systems, this string is critical for device driver matching and dynamic hardware abstraction.
+
+.. note::
+
+    You may notice that the ``compatible`` property appears in many places across the device tree,
+    since it is commonly used to match both devices and board types.
+
+    For this lab, we are only interested in the ``compatible`` string associated with the **root node**.
+    According to the official `Device Tree Specification <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/devicetree-specification-v0.4.pdf>`_, the ``compatible`` string for the root node is guaranteed to appear near the very beginning
+    of the DTB structure block.
+    To simplify the task, you may scan the structure block starting from the offset specified by ``off_dt_struct``,
+    and extract the **first property tagged as ``compatible``**. This will safely correspond to the root node.
+
+    In the next lab, you will learn how to properly walk the tree and distinguish ``compatible`` properties
+    attached to other nodes.
+
+
+It is assumed that the DTB pointer is passed in register ``a1`` during boot.
+You should store this value and use it as the starting point for your access functions.
+
+.. admonition:: Todo
+
+    Implement two simple accessors:
+
+    - Extract the ``compatible`` string from the root node
+    - Extract the first 64-bit pair from ``/memory/reg`` (i.e., base address and size)
+
+    Integrate these outputs into your ``info`` shell command alongside the SBI results.
+
+.. note::
+
+    You do not need to implement a full DTB parser for this exercise.  
+    You may use hardcoded offsets or minimal binary pattern matching to retrieve values from known locations in the DTB.
+
+    In the next lab, you will learn how to properly traverse and decode the device tree structure in a general and reusable way.
