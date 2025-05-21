@@ -1,9 +1,3 @@
-.. warning::
-
-   This document is currently under construction and may be incomplete or subject to significant changes.
-   Please check back later for updates, and consult the instructor if you are unsure about any missing parts.
-
-
 ========================
 Lab 1: Hello World
 ========================
@@ -128,7 +122,7 @@ You will implement a generic function:
                             unsigned long arg5);
 
 
-This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0–a7), executes an ecall, and retrieves the result from registers a0 (error code) and a1 (value).
+This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0-a7), executes an ecall, and retrieves the result from registers a0 (error code) and a1 (value).
 
 .. admonition:: Todo
 
