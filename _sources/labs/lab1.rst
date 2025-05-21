@@ -1,9 +1,3 @@
-.. warning::
-
-   This document is currently under construction and may be incomplete or subject to significant changes.
-   Please check back later for updates, and consult the instructor if you are unsure about any missing parts.
-
-
 ========================
 Lab 1: Hello World
 ========================
@@ -128,7 +122,7 @@ You will implement a generic function:
                             unsigned long arg5);
 
 
-This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0–a7), executes an ecall, and retrieves the result from registers a0 (error code) and a1 (value).
+This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0-a7), executes an ecall, and retrieves the result from registers a0 (error code) and a1 (value).
 
 .. admonition:: Todo
 
@@ -144,33 +138,34 @@ Advanced Exercise
 ********************
 
 Advanced Exercise: Device Tree-Based Info (10%)
-############################################
+###############################################
 
 On most RISC-V platforms, including the VF2 board, a pre-installed firmware-level bootloader
 (such as OpenSBI or U-Boot) is responsible for early hardware initialization and for passing 
 a Flattened Device Tree (DTB) to the kernel or to a custom bare-metal program.
 
-This DTB provides a structured description of the platform's hardware components. 
+The DTB provides a structured description of the platform’s hardware components. 
 It is assumed that the DTB pointer is passed in register ``a1`` during boot.
 You should store this value and use it as the starting point for your access functions.
 
-
 .. admonition:: Todo
 
-    Implement a simple accessor function to:
+    Implement two simple accessors:
 
-    - Extract the ``model`` string from the root node
-    - Extract the UART base address from the ``reg`` property of the ``serial@10000000`` node
+    - Extract the ``model`` string from the root node.
+    - Search for a node whose ``compatible`` field contains ``"snps,dw-apb-uart"``,
+      and extract its ``reg`` property as the UART base address.
 
-    Integrate these outputs into your ``info`` shell command alongside the SBI results.
+    Integrate these outputs into your ``info`` shell command alongside the SBI results,
+    and use the obtained base address to initialize the serial interface.
 
 The device tree source file ``jh7110-starfive-visionfive-2-v1.3b.dts`` can be found
 in the official `StarFive Linux GitHub repository <https://github.com/starfive-tech/linux>`_.
 
 Although full device tree parsing is complex and will be covered in detail in the next lab,
-in this exercise you will retrieve a few key fields using fixed node and property names.
+in this exercise you will retrieve a few key fields using fixed property names and simple node matching.
 This allows you to begin using the device tree as a source of system configuration data
-without needing to understand its full structure yet.
+without needing to understand its full hierarchical structure yet.
 
 The ``model`` property under the root node provides a human-readable description of the target board.
 It is commonly used in logs, diagnostics, and shell outputs to identify the hardware platform. 
@@ -180,28 +175,37 @@ hardware information can be extracted from the DTB for display and verification 
 This also provides a good opportunity to replace hardcoded board-specific configuration
 values from Lab 0 with values extracted from the DTB. 
 Specifically, the UART base address used to initialize the serial interface in Lab 0 
-may now be replaced with device tree data. The UART node is named ``serial@10000000``, and
-it contains a ``reg`` property that specifies the base address and size of the UART registers.
+may now be retrieved by scanning the DTB for a node whose ``compatible`` field contains 
+``"snps,dw-apb-uart"``. This node should also contain a ``reg`` property, which specifies 
+the base address and size of the UART registers.
+
+Using the ``compatible`` field rather than a fixed node name (such as ``serial@10000000``)
+makes your implementation more robust and portable across board versions or different UART configurations.
 
 The ``reg`` field declares the UART base address using a 64-bit format:
 
     ``reg = <0x0 0x10000000 0x0 0x10000>;``
 
-To extract the base address, combine the first two words of the ``reg`` property. 
-You can refer to the `JH7110 UART Developing Guide <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/SDK_DG_UART.pdf>`_
-for more details.
+To extract the actual base address, combine the first two 32-bit words of the ``reg`` property:
 
-For additional reference, you may consult the following minimal DTB-parsing example ``fdtget.c``
-from `dgibson/dtc repository <https://github.com/dgibson/dtc/>`_. This code demonstrates how to locate a device node by path and retrieve a property using:
+    ``base = (uint64_t)reg[0] << 32 | reg[1];``
+
+More details can be found in Section 2.3 of the 
+`JH7110 UART Developing Guide <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/SDK_DG_UART.pdf>`_.
+
+As a practical code reference, you may also consult the minimal DTB-parsing example ``fdtget.c``
+from the `dgibson/dtc repository <https://github.com/dgibson/dtc/>`_. 
+This example demonstrates how to locate a device node by path and retrieve a property using:
 
 - ``fdt_path_offset(fdt, "/path")``
 - ``fdt_getprop(fdt, offset, "property", &len)``
 
-While your implementation in this lab does not rely on the full device tree parsing capabilities,
-you may find it helpful to understand how to navigate the device tree structure.
+While your implementation in this lab does not rely on full-featured device tree parsing,
+it may still be helpful to understand how the standard library interfaces with the DTB structure.
 
 .. note::
 
-    The ``model`` property is *optional* according to the device tree specification, while
-    it is typically present at the root node to provide a descriptive label for the board.
+    The ``model`` property is *optional* according to the device tree specification,
+    but it is typically present at the root node to provide a descriptive label for the board.
+
 
