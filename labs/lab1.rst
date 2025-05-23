@@ -107,6 +107,8 @@ You will:
 SBI Call Design
 ========================
 
+.. #TODO add https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/kernel/sbi.c#L25
+
 OpenSBI exposes system services to supervisor-mode software through a standardized calling convention using the ecall instruction.
 
 You will implement a generic function:
@@ -122,7 +124,8 @@ You will implement a generic function:
                             unsigned long arg5);
 
 
-This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0-a7), executes an ecall, and retrieves the result from registers a0 (error code) and a1 (value).
+This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0-a7), executes an ecall, 
+and retrieves the result from registers a0 (error code) and a1 (value).
 
 .. admonition:: Todo
 
@@ -132,6 +135,16 @@ This function uses inline assembly to load arguments into the appropriate RISC-V
     - Function ID ``0x0``: ``sbi_get_spec_version()``: returns OpenSBI version
     - Function ID ``0x1``: ``sbi_get_impl_id()``: returns implementation ID
     - Function ID ``0x2``: ``sbi_get_impl_version()``: returns implementation version
+    .. - sbi_system_reset #TODO
+
+.. #TODO suggest implementation of printf-like function is suggested
+
+.. Use the ``sbi_ecall(...)`` function to implement a new shell command ``info`` that displays the following information:
+
+.. - OpenSBI version
+.. - Implementation ID
+.. - Implementation version
+
 
 ********************
 Advanced Exercise
@@ -144,7 +157,7 @@ On most RISC-V platforms, including the VF2 board, a pre-installed firmware-leve
 (such as OpenSBI or U-Boot) is responsible for early hardware initialization and for passing 
 a Flattened Device Tree (DTB) to the kernel or to a custom bare-metal program.
 
-The DTB provides a structured description of the platform’s hardware components. 
+The DTB provides a structured description of the platform's hardware components. 
 It is assumed that the DTB pointer is passed in register ``a1`` during boot.
 You should store this value and use it as the starting point for your access functions.
 
@@ -161,6 +174,12 @@ You should store this value and use it as the starting point for your access fun
 
 The device tree source file ``jh7110-starfive-visionfive-2-v1.3b.dts`` can be found
 in the official `StarFive Linux GitHub repository <https://github.com/starfive-tech/linux>`_.
+
+.. #TODO alternative code sample repository
+.. model:
+.. https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts#L11
+.. uart0:
+.. https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/boot/dts/starfive/jh7110.dtsi#L374
 
 Although full device tree parsing is complex and will be covered in detail in the next lab,
 in this exercise you will retrieve a few key fields using fixed property names and simple node matching.

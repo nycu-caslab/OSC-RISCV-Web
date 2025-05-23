@@ -36,15 +36,6 @@ In this lab, you'll implement a bootloader that loads the actual kernel through 
 Basic Exercises
 *****************
 
-.. Basic Exercise 1 - Reboot - 10%
-.. ################################
-
-.. The VF2 board may not have a dedicated reset button. Implementing a software-based reboot mechanism can be useful for development and testing purposes.
-
-.. .. admonition:: Todo
-
-..     Implement a function to reboot the VF2 board by interacting with the appropriate system registers or invoking system calls.
-
 Basic Exercise 1 - UART Bootloader - 30%
 #########################################
 
