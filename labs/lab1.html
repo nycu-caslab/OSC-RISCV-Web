@@ -442,7 +442,8 @@ The shell should recognize the listed commands and print appropriate responses.<
                         unsigned long arg5);
 </pre></div>
 </div>
-<p>This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0-a7), executes an ecall, and retrieves the result from registers a0 (error code) and a1 (value).</p>
+<p>This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0-a7), executes an ecall,
+and retrieves the result from registers a0 (error code) and a1 (value).</p>
 <div class="admonition-todo admonition">
 <p class="admonition-title">Todo</p>
 <p>Implement <code class="docutils literal notranslate"><span class="pre">sbi_ecall(...)</span></code> using inline assembly.
