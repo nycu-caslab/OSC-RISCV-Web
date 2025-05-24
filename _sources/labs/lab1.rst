@@ -95,7 +95,10 @@ Basic Exercise 4 - System Information - 25%
 
 Interacting with low-level system firmware is a key aspect of bare-metal development on RISC-V platforms.
 
-In this exercise, you will implement a general-purpose SBI (Supervisor Binary Interface) call wrapper and use it to query basic system information from OpenSBI. This includes retrieving the current hardware thread ID (hart ID) and the OpenSBI version specification.
+In this exercise, you will implement a general-purpose SBI (Supervisor Binary Interface) call wrapper 
+and use it to query basic system information from OpenSBI. 
+This includes retrieving the current hardware thread ID (hart ID) 
+and the OpenSBI version specification.
 
 You will:
 	•	Implement the ``sbi_ecall(...)`` function in C using inline assembly.
@@ -109,11 +112,11 @@ SBI Call Design
 
 .. #TODO add https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/kernel/sbi.c#L25
 
-OpenSBI exposes system services to supervisor-mode software through a standardized calling convention using the ecall instruction.
+OpenSBI exposes system services to supervisor-mode software through a standardized calling convention using the ``ecall`` instruction.
 
 You will implement a generic function:
 
-.. code-block:: sbi_ecall
+.. code-block:: c
 
     struct sbiret sbi_ecall(int ext, int fid,
                             unsigned long arg0,
@@ -124,27 +127,38 @@ You will implement a generic function:
                             unsigned long arg5);
 
 
-This function uses inline assembly to load arguments into the appropriate RISC-V registers (a0-a7), executes an ecall, 
-and retrieves the result from registers a0 (error code) and a1 (value).
+This function uses inline assembly to load arguments into the appropriate RISC-V registers ``a0`` to ``a7``,
+executes the ``ecall`` instruction, 
+and retrieves the result from registers ``a0`` (error code) and ``a1`` (return value).
+For a reference implementation in the Linux kernel, 
+see ``sbi_ecall`` in the `Linux 6.6 source <https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/kernel/sbi.c#L25>`_.
 
 .. admonition:: Todo
 
     Implement ``sbi_ecall(...)`` using inline assembly.  
-    Test it by calling the following SBI functions with extension ID ``0x10`` (SBI_EXT_BASE):
+    Test it by calling the following SBI functions with 
+    Extension ID ``0x10`` (SBI_EXT_BASE):
 
     - Function ID ``0x0``: ``sbi_get_spec_version()``: returns OpenSBI version
     - Function ID ``0x1``: ``sbi_get_impl_id()``: returns implementation ID
     - Function ID ``0x2``: ``sbi_get_impl_version()``: returns implementation version
-    .. - sbi_system_reset #TODO
+    
+    and Extension ID ``0x53525354`` (SBI_EXT_SRST), 
 
-.. #TODO suggest implementation of printf-like function is suggested
+    - Function ID ``0x0``: ``sbi_system_reset(...)``: performs a system reset
 
-.. Use the ``sbi_ecall(...)`` function to implement a new shell command ``info`` that displays the following information:
+After implementing ``sbi_ecall(...)``, use it to support a new shell command ``info``
+that displays the following information on the VF2 board:
 
-.. - OpenSBI version
-.. - Implementation ID
-.. - Implementation version
+- OpenSBI specification version
+- Implementation ID
+- Implementation version
 
+To print formatted results in your shell, you may implement a minimal ``printf``-like function,
+or use your existing UART output routine with manual formatting.
+
+``info`` will serve as your first system-level introspection tool 
+and should include both SBI-based results and DTB-based results if available (See Advanced Exercise).
 
 ********************
 Advanced Exercise
@@ -155,7 +169,7 @@ Advanced Exercise: Device Tree-Based Info (10%)
 
 On most RISC-V platforms, including the VF2 board, a pre-installed firmware-level bootloader
 (such as OpenSBI or U-Boot) is responsible for early hardware initialization and for passing 
-a Flattened Device Tree (DTB) to the kernel or to a custom bare-metal program.
+a Flattened Device Tree (FDT) to the kernel or to a custom bare-metal program.
 
 The DTB provides a structured description of the platform's hardware components. 
 It is assumed that the DTB pointer is passed in register ``a1`` during boot.
@@ -166,37 +180,41 @@ You should store this value and use it as the starting point for your access fun
     Implement two simple accessors:
 
     - Extract the ``model`` string from the root node.
-    - Search for a node whose ``compatible`` field contains ``"snps,dw-apb-uart"``,
-      and extract its ``reg`` property as the UART base address.
+    - Search for a node whose ``compatible`` field contains either ``"snps,dw-apb-uart"`` (on VF2)
+      or ``"ns16550a"`` (on QEMU ``virt``) and extract its ``reg`` property as the UART base address.
 
     Integrate these outputs into your ``info`` shell command alongside the SBI results,
     and use the obtained base address to initialize the serial interface.
 
-The device tree source file ``jh7110-starfive-visionfive-2-v1.3b.dts`` can be found
+The device tree source file ``jh7110-starfive-visionfive-2-v1.3b.dts`` for vf2 can be found
 in the official `StarFive Linux GitHub repository <https://github.com/starfive-tech/linux>`_.
+You may also consult the annotated source view provided by Bootlin,
+which offers a stable and cross-referenced archive for inspection and citation:
 
-.. #TODO alternative code sample repository
-.. model:
-.. https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts#L11
-.. uart0:
-.. https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/boot/dts/starfive/jh7110.dtsi#L374
+- Root node definition: https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dts#L10
+- UART0 node definition: https://elixir.bootlin.com/linux/v6.6/source/arch/riscv/boot/dts/starfive/jh7110.dtsi#L374
 
 Although full device tree parsing is complex and will be covered in detail in the next lab,
-in this exercise you will retrieve a few key fields using fixed property names and simple node matching.
+in this exercise you will retrieve a few key fields using fixed property names 
+and simple node matching.
 This allows you to begin using the device tree as a source of system configuration data
 without needing to understand its full hierarchical structure yet.
 
 The ``model`` property under the root node provides a human-readable description of the target board.
 It is commonly used in logs, diagnostics, and shell outputs to identify the hardware platform. 
 Even though this lab explicitly targets the VF2 board, retrieving the ``model`` field helps illustrate how
-hardware information can be extracted from the DTB for display and verification purposes. 
+hardware information can be extracted from the DTB for display and verification purposes.
+
+If you run the same code under QEMU's ``virt`` machine, the ``model`` string will differ accordingly,
+which demonstrates how the DTB reflects the platform identity
+and can be used to distinguish runtime environments.
 
 This also provides a good opportunity to replace hardcoded board-specific configuration
 values from Lab 0 with values extracted from the DTB. 
 Specifically, the UART base address used to initialize the serial interface in Lab 0 
 may now be retrieved by scanning the DTB for a node whose ``compatible`` field contains 
-``"snps,dw-apb-uart"``. This node should also contain a ``reg`` property, which specifies 
-the base address and size of the UART registers.
+``"snps,dw-apb-uart"`` or ``"ns16550a"`` (QEMU). This node should also contain 
+a ``reg`` property, which specifies the base address and size of the UART registers.
 
 Using the ``compatible`` field rather than a fixed node name (such as ``serial@10000000``)
 makes your implementation more robust and portable across board versions or different UART configurations.
@@ -211,9 +229,14 @@ To extract the actual base address, combine the first two 32-bit words of the ``
 
 More details can be found in Section 2.3 of the 
 `JH7110 UART Developing Guide <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/SDK_DG_UART.pdf>`_.
+For QEMU, you may extract the actual device tree used by the ``virt`` machine
+using the ``-dumpdtb`` option and inspect it with ``dtc`` for compatible strings such as ``"ns16550a"``.
 
 As a practical code reference, you may also consult the minimal DTB-parsing example ``fdtget.c``
-from the `dgibson/dtc repository <https://github.com/dgibson/dtc/>`_. 
+from the `dgibson/dtc repository <https://github.com/dgibson/dtc/>`_,
+which is the upstream development site for the Device Tree Compiler 
+maintained by David Gibson—one of the original contributors 
+to the Device Tree standard and the Linux kernel support for it.
 This example demonstrates how to locate a device node by path and retrieve a property using:
 
 - ``fdt_path_offset(fdt, "/path")``
