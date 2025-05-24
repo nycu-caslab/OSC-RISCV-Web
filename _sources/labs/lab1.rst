@@ -82,7 +82,7 @@ identifies complete commands, and prints the corresponding output.
 .. important::
 
     Be mindful of character alignment issues when handling screen I/O.
-    Consider translating newline characters (`\n`) into carriage return + newline (`\r\n`)
+    Consider translating newline characters (``\n``) into carriage return + newline (``\r\n``)
     to ensure proper display across different serial terminals.
 
 .. admonition:: Todo

@@ -125,7 +125,7 @@ To accommodate different memory layouts and ensure compatibility, a bootloader m
    the currently loaded kernel or the initrd image.
    A typical memory layout might consider the addresses and sizes of 
    `Bootloader`, `Kernel Image` to be loaded, 
-   `Device Tree Blog` (DTB) and `Initial Ramdisk` (``initrd``). 
+   `Device Tree Blob` (DTB) and `Initial Ramdisk` (``initrd``). 
    You need to consult the devicetree to decide the memory layout and adjust the linker script
    to properly decide the relocation process, especially if the ``initramfs.cpio`` you prepared is very large.
    
