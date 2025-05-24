@@ -45,13 +45,18 @@ Loading the kernel image onto the VF2 board can be streamlined by implementing a
 
     Develop a bootloader that listens for a kernel image transmitted over UART and loads it into memory for execution. Design a simple protocol for data transmission to ensure reliability.
 
+The bootloader is typically loaded and executed from address ``0x40200000``, which corresponds to the on-chip SRAM on the VF2 board and is the standard entry point used by the SoC after reset.
+
+To avoid overwriting itself, the bootloader **must not** load the kernel into this same region. A common practice is to load the kernel into DDR memory, such as at address ``0x80000000``, while keeping the bootloader resident in SRAM.
+A safe practice is to consult the device tree (``/memory`` node) to determine the available RAM layout. Also see *Basic Exercise 3: Device Tree* for more details.
+
+Relocation is covered in *Advanced Exercise* and is optional. If you choose to implement self-relocation, the bootloader can move itself to another region (e.g., higher DRAM) before loading the kernel. Otherwise, you must ensure the kernel and initial ramdisk are loaded into memory regions that do not overlap with the bootloader's footprint.
+
 .. note::
 
-   The bootloader should be initially loaded at address ``0x40200000``, which is the expected entry point for first-stage code on the VF2 board.
+   If you have extended the shell from the previous lab, your bootloader may already support basic device tree parsing and provide a simple command interface. In that case, you can implement a ``load_kernel`` command to receive the kernel image over UART, allowing your shell to act as a convenient interface for development.
 
-   To avoid memory conflicts with the kernel and the initial ramdisk, it is recommended to relocate the bootloader—after the kernel has been loaded—to a safe region such as ``0x40100000`` (before the kernel), or alternatively to a higher address such as ``0x46200000`` (after the ramdisk, depending on the size of your ``initrd``), provided that the region remains free for kernel or runtime use.
-
-   See *Basic Exercise 3* for relocation implementation details.
+   This bootloader can then serve as a stable "fork point" from which both kernel development and system-level testing can proceed. Since the same shell is reused, you avoid duplicating early-stage code and can leverage its existing device tree parsing functionality. 
 
 
 Basic Exercise 2 - Initial Ramdisk - 30%
@@ -80,7 +85,6 @@ An initial ramdisk (initrd) is a temporary root file system loaded into memory d
                arch = "riscv";
                os = "linux";
                compression = "none";
-               load = <0x0 0x46100000>;
            };
        };
 
@@ -104,6 +108,9 @@ A device tree is a data structure that describes the hardware components of a sy
 
     Integrate device tree support into your bootloader. Parse the device tree to initialize hardware components appropriately during the boot process.
 
+.. TODO: explain in detail how to parse the device tree and use it to initialize hardware components; 
+   include both structural explanation and sample code or reference. 
+   Also mention how to retrieve memory layout and related properties from the DT.
 
 ********************
 Advanced Exercise

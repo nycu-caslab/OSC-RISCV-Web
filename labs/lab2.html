@@ -369,11 +369,14 @@ Please check back later for updates, and consult the instructor if you are unsur
 <p class="admonition-title">Todo</p>
 <p>Develop a bootloader that listens for a kernel image transmitted over UART and loads it into memory for execution. Design a simple protocol for data transmission to ensure reliability.</p>
 </div>
+<p>The bootloader is typically loaded and executed from address <code class="docutils literal notranslate"><span class="pre">0x40200000</span></code>, which corresponds to the on-chip SRAM on the VF2 board and is the standard entry point used by the SoC after reset.</p>
+<p>To avoid overwriting itself, the bootloader <strong>must not</strong> load the kernel into this same region. A common practice is to load the kernel into DDR memory, such as at address <code class="docutils literal notranslate"><span class="pre">0x80000000</span></code>, while keeping the bootloader resident in SRAM.
+A safe practice is to consult the device tree (<code class="docutils literal notranslate"><span class="pre">/memory</span></code> node) to determine the available RAM layout. Also see <em>Basic Exercise 3: Device Tree</em> for more details.</p>
+<p>Relocation is covered in <em>Advanced Exercise</em> and is optional. If you choose to implement self-relocation, the bootloader can move itself to another region (e.g., higher DRAM) before loading the kernel. Otherwise, you must ensure the kernel and initial ramdisk are loaded into memory regions that do not overlap with the bootloader’s footprint.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The bootloader should be initially loaded at address <code class="docutils literal notranslate"><span class="pre">0x40200000</span></code>, which is the expected entry point for first-stage code on the VF2 board.</p>
-<p>To avoid memory conflicts with the kernel and the initial ramdisk, it is recommended to relocate the bootloader—after the kernel has been loaded—to a safe region such as <code class="docutils literal notranslate"><span class="pre">0x40100000</span></code> (before the kernel), or alternatively to a higher address such as <code class="docutils literal notranslate"><span class="pre">0x46200000</span></code> (after the ramdisk, depending on the size of your <code class="docutils literal notranslate"><span class="pre">initrd</span></code>), provided that the region remains free for kernel or runtime use.</p>
-<p>See <em>Basic Exercise 3</em> for relocation implementation details.</p>
+<p>If you have extended the shell from the previous lab, your bootloader may already support basic device tree parsing and provide a simple command interface. In that case, you can implement a <code class="docutils literal notranslate"><span class="pre">load_kernel</span></code> command to receive the kernel image over UART, allowing your shell to act as a convenient interface for development.</p>
+<p>This bootloader can then serve as a stable “fork point” from which both kernel development and system-level testing can proceed. Since the same shell is reused, you avoid duplicating early-stage code and can leverage its existing device tree parsing functionality.</p>
 </div>
 </section>
 <section id="basic-exercise-2-initial-ramdisk-30">
@@ -398,7 +401,6 @@ Please check back later for updates, and consult the instructor if you are unsur
 <span class="w">            </span><span class="n">arch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;riscv&quot;</span><span class="p">;</span>
 <span class="w">            </span><span class="n">os</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;linux&quot;</span><span class="p">;</span>
 <span class="w">            </span><span class="n">compression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;none&quot;</span><span class="p">;</span>
-<span class="w">            </span><span class="n">load</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="mh">0x0</span><span class="w"> </span><span class="mh">0x46100000</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="w">        </span><span class="p">};</span>
 <span class="w">    </span><span class="p">};</span>
 
