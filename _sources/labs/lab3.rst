@@ -28,11 +28,16 @@ They’ll be used in all later labs.
 Goals of this lab
 #################
 
-* Implement a Page Frame Allocator that reads memory ranges from the VF2 Device Tree.
+* Implement a Page Frame Allocator that uses Lab 2’s `mem_regions[]` array for all physical RAM segments.
 
-* Implement a Dynamic Memory Allocator that obtains pages from the VF2 Page Frame Allocator.
+* Implement a Dynamic Memory Allocator that calls `p_alloc(1)` (from the Page Frame Allocator) and partitions pages into chunk pools.
 
-* Implement a Startup Allocator based on a bump pointer, using VF2 Device Tree <memory> and <reserved-memory> entries.
+* Implement a Startup Allocator (bump-pointer) that uses the addresses retrieved by Lab 2’s DT parser:
+    – DTB Blob
+    – Kernel Image
+    – Initramfs
+    – Any implementer-defined reserved regions
+  to reserve all those areas before setting up the Page Frame Array.
 
 
 ##########
@@ -42,11 +47,25 @@ Background
 Reserved Memory
 ================
 
-After VF2 is booted, all reserved memory regions—including spin tables (if required by the platform),
-the device tree blob, the kernel image, initramfs, and any platform-specific reserved areas—
-must be provided by the VF2 Device Tree <reserved-memory> nodes.
-Your Startup Allocator should read these <reserved-memory> entries at startup,
-mark the corresponding physical frames as reserved, and not allocate them.
+After VF2 is booted, the following memory regions must be reserved before any allocation:
+  1. Device Tree Blob (DTB)
+  2. Kernel image
+  3. Initramfs (ramdisk)
+  4. Any additional platform-specific reserved areas (e.g., spin tables, CLINT/PLIC buffers)
+
+Since Lab 2 already performed DT parsing, use the parsed data directly:
+  • For the DTB: use the ``fdt_ptr`` value (passed in a1) and ``fdt_totalsize(fdt_ptr)`` to obtain start and size.
+  • For the Kernel image: use linker symbols (e.g., `&_phys_start` and `&_phys_end`) to obtain its physical range.
+  • For the Initramfs: use ``/chosen`` properties ``linux,initrd-start`` and ``linux,initrd-end`` to obtain its range.
+  • For any other reserved areas defined in the DTS: they should be listed by the implementer and retrieved from the parsed DT data.
+
+Before initializing any allocator, call:
+    memory_reserve(dtb_start, dtb_size);
+    memory_reserve(kernel_start, kernel_size);
+    memory_reserve(initrd_start, initrd_size);
+    // plus any other implementer‐defined reserved regions from DT parsing
+to mark those frames as reserved.
+
 
 Dynamic Memory Allocator
 ========================
@@ -79,7 +98,7 @@ Observability of Allocators
 
 It's hard to observe the internal state of a memory allocator and hence hard to demo.
 To check the correctness of your allocator on VF2, you need to **print the log of each allocation and free**
-over the VF2 UART driver (initialized via the Device Tree’s chosen stdout-path).
+over the VF2 UART driver. Assume Lab 2 already initialized UART from the Device Tree’s `stdout-path`.
 
 .. note::
   TAs will verify correctness by these logs during the demo. Prefix each log message with “[VF2 Allocator] ”
@@ -105,9 +124,9 @@ You can still design it yourself as long as you follow the specification of the 
 
 .. admonition:: Todo
 
-    Implement the buddy system for contiguous page frames allocation on VF2. Your maximum order must be larger than 5.
-    Ensure that you compute page frame counts and addresses using the <memory> regions read from the VF2 Device Tree,
-    skipping any holes.
+    Implement the buddy system for contiguous page frame allocation on VF2. Your maximum order must be larger than 5.
+    Use Lab 2’s `mem_regions[]` array (each entry contains base and size of a RAM segment)
+    to compute total page count and physical frame addresses, ignoring any gaps between segments.
 
 .. note::
 
@@ -198,10 +217,11 @@ the allocator stops and put the merged block to the linked-list.
 Basic Exercise 2 - Dynamic Memory Allocator - 30%
 =================================================
 
-Your Page Frame Allocator already provides 4 KB-aligned page frames.
-The Dynamic Memory Allocator must call the page_allocator API (e.g., p_alloc(1)) to obtain a single page frame
-and compute its physical base address. For small allocations (< 4 KB), maintain multiple chunk pools
-(e.g., sizes 16, 32, 48, 96 bytes, etc.). Partition each 4 KB page into fixed-size chunks for a given pool.
+Your Page Frame Allocator (from Basic Exercise 1) provides 4 KB-aligned page frames via `p_alloc(1)`.
+The Dynamic Memory Allocator must call `p_alloc(1)` to obtain one page and use its physical base address.
+For small allocations (< 4 KB), maintain multiple chunk pools (sizes 16, 32, 48, 96 bytes, etc.),
+partitioning each page into fixed-size chunks for the corresponding pool.
+
 On each allocation request:
   1. Round up the requested size to the nearest pool size.
   2. If a free chunk exists in the corresponding pool, return it; otherwise, request a new page from the Page Frame Allocator.
@@ -224,8 +244,10 @@ Advanced Exercise 1 - Efficient Page Allocation on VF2 Device Tree - 10%
 =====================================================
 
 Basically, when you dynamically assign or free a page on VF2, your buddy system’s response time should be as quick as possible.
-In the basic part, we only care about correctness, but in this section, you must optimize your data structures
-so that locating any page frame node takes O(1) time and allocation/free still takes O(log n).
+In the basic part, your allocator can focus on one of the parsed memory segments from Lab 2’s `mem_regions[]` array
+and does not need to handle reserved regions. Simply pick a single `mem_regions[i]` (e.g., the first entry)
+and manage that contiguous block of RAM only.
+
 
 .. admonition:: Todo
 
@@ -234,41 +256,67 @@ so that locating any page frame node takes O(1) time and allocation/free still t
 Advanced Exercise 2 - Reserved Memory via VF2 Device Tree - 10%
 ===========================================
 
-As previously noted in the background, when rpi3 is booted, some physical memory is already in use, not allocable memory blocks must be marked. 
-In this task, you should design an API to reserve specific locations.
+As previously noted in the background, when VF2 is booted, specific memory regions must be reserved.  
+Since Lab 2 already parsed the Device Tree, use the parsed values directly to reserve:
 
-The following code is a brief example:
+  1. DTB Blob:
+     • `dtb_start = (uint64_t)fdt_ptr;`
+     • `dtb_size  = fdt_totalsize(fdt_ptr);`
+     Call `memory_reserve(dtb_start, dtb_size);`
+  2. Kernel Image:
+     • `kernel_start = (uint64_t)&_phys_start;`
+     • `kernel_end   = (uint64_t)&_phys_end;`
+     • `kernel_size  = kernel_end - kernel_start;`
+     Call `memory_reserve(kernel_start, kernel_size);`
+  3. Initramfs:
+     • `initrd_start = fdt_getprop_u64(fdt_ptr, "/chosen", "linux,initrd-start");`
+     • `initrd_end   = fdt_getprop_u64(fdt_ptr, "/chosen", "linux,initrd-end");`
+     • `initrd_size  = initrd_end - initrd_start;`
+     Call `memory_reserve(initrd_start, initrd_size);`
+  4. Any additional reserved regions (e.g., spin tables, DMA buffers, platform-specific):
+     • These must be defined by the implementer (e.g., hardcoded in C or provided via `/memreserve/` in DTS)
+     • Retrieve their `(base, size)` pairs from the parsed DT data
+     • Call `memory_reserve(base, size);` for each.
 
 .. code:: c
 
-  void memory_reserve(start, end) {
-      //…
+  void memory_reserve(uint64_t start, uint64_t size) {
+      // Mark all 4 KB page frames in [start, start + size) as reserved
   }
 
 .. admonition:: Todo
 
-   Design an API `memory_reserve(uint64_t start, uint64_t size)` that marks frames as reserved based on
-   VF2 Device Tree <reserved-memory> entries. The Startup Allocator must call this API for each reserved node.
+   Use the values already obtained by Lab 2’s DT parser and call `memory_reserve()` for each of the four categories above.
 
 
 Advanced Exercise 3 - Startup Allocation with VF2 Device Tree - 20%
 ==============================================
 In general purpose operating systems, the amount of physical memory is determined at runtime. Hence, a kernel needs to dynamically allocate its page frame array for its page frame allocator. The page frame allocator then depends on dynamic memory allocation. The dynamic memory allocator depends on the page frame allocator. This introduces the chicken or the egg problem. To break the dilemma, you need a dedicated startup allocator during startup time.
 
-The design of the startup allocator is quite simple. Implement a minimal bump-pointer allocator at startup that does not rely on the page allocator.
+The design of the startup allocator is quite simple. Implement a minimal bump-pointer allocator at startup that does not rely on the Page Frame Allocator.  
+Lab 2 has already parsed all `<memory>` nodes and retrieved:
+  • An array `mem_regions[]` of `{ base, size }` pairs for all available RAM segments.
+
 This bump allocator must:
+  1. Iterate over `mem_regions[]` (from Lab 2) to compute the combined usable memory segments.
+  2. Before allocating any frame array or other structures, reserve:
+     • DTB Blob: call memory_reserve(dtb_start, dtb_size).
+     • Kernel Image: call memory_reserve(kernel_start, kernel_size).
+     • Initramfs:   call memory_reserve(initrd_start, initrd_size).
+     • Any implementer-defined reserved regions (from Lab 2’s parsed DT data): call memory_reserve(base, size).
+  3. From the first usable `mem_regions[i]` after those reservations, allocate a contiguous region (4KB-aligned)
+     of length `frame_array_size = total_page_count × sizeof(struct frame_struct)`:
+       • `frame_array_start = align_up(mem_regions[i].base, 4096);`
+       • Advance `bump_ptr` by `frame_array_size`.
+       • Call `memory_reserve(frame_array_start, frame_array_size)` to mark it as reserved.
+  4. Initialize the Page Frame Array data structures in that region.
+  5. Handover control to the Buddy System, which will manage all remaining free 4 KB page frames.
 
-  1. Read all physical memory ranges from the VF2 Device Tree’s <memory> node.
-  2. Read each <reserved-memory> entry and call memory_reserve(start, size) to mark frames as reserved.
-  3. Use the remaining usable memory to allocate space for the Page Frame Array (frame bookkeeping).
-  4. After setting up the Page Frame Array, hand over control to the buddy system,
-     which will mark the reserved segments as allocated in the frame array.
-
-This bump allocator will only be used during early boot before the buddy system is fully initialized.
+This bump allocator is used only during early boot (before Buddy System is ready).
 
 .. admonition:: Todo
 
-   Implement the startup allocation.
+   Use Lab 2’s `mem_regions[]`, plus the four categories of reservation from above, to implement `startup_alloc()`.
 
 .. note::
   * Your buddy system must handle VF2’s total physical memory and any holes reported by the Device Tree.
