@@ -138,11 +138,11 @@ For each entry in *The Array* with index :math:`\text{idx}` and value :math:`\te
   if :math:`\text{val} = \text{<X>}`: (user defined value)
     The :math:`\text{idx}`'th frame is already allocated, hence not allocable.
 
-.. image:: images/buddy_frame_array.svg
+.. image:: /images/buddy_frame_array.svg
 
 Below is the generalized view of **The Frame Array**:
 
-.. image:: images/buddy.svg
+.. image:: /images/buddy.svg
 
 
 You can calculate the address and the size of the contiguous block by the following formula.
