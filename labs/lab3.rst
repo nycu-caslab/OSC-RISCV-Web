@@ -4,9 +4,9 @@
    Please check back later for updates, and consult the instructor if you are unsure about any missing parts.
 
 
-================
-Lab 3: Allocator
-================
+=======================
+Lab 3: Memory Allocator
+=======================
 
 ############
 Introduction
