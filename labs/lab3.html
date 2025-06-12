@@ -316,8 +316,8 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#goals-of-this-lab">Goals of this lab</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reserved-memory">Reserved Memory</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-memory-allocator">Dynamic Memory Allocator</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#page-frame-allocator">Page Frame Allocator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-memory-allocator">Dynamic Memory Allocator</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#observability-of-allocators">Observability of Allocators</a></li>
 </ul>
 </li>
@@ -376,18 +376,15 @@ They’ll be used in all later labs.</p>
 </section>
 <section id="goals-of-this-lab">
 <h2>Goals of this lab<a class="headerlink" href="#goals-of-this-lab" title="Link to this heading">#</a></h2>
-<ul>
+<ul class="simple">
+<li><p>Implement a Startup Allocator (bump-pointer) that uses the addresses retrieved by Lab 2’s DT parser:
+* DTB Blob
+* Kernel Image
+* Initramfs
+* Any implementer-defined reserved regions
+to reserve all those areas before setting up the Page Frame Array.</p></li>
 <li><p>Implement a Page Frame Allocator that uses Lab 2’s <cite>mem_regions[]</cite> array for all physical RAM segments.</p></li>
 <li><p>Implement a Dynamic Memory Allocator that calls <cite>p_alloc(1)</cite> (from the Page Frame Allocator) and partitions pages into chunk pools.</p></li>
-<li><dl class="simple">
-<dt>Implement a Startup Allocator (bump-pointer) that uses the addresses retrieved by Lab 2’s DT parser:</dt><dd><p>– DTB Blob
-– Kernel Image
-– Initramfs
-– Any implementer-defined reserved regions</p>
-</dd>
-</dl>
-<p>to reserve all those areas before setting up the Page Frame Array.</p>
-</li>
 </ul>
 </section>
 <section id="background">
@@ -417,14 +414,6 @@ memory_reserve(initrd_start, initrd_size);
 </dl>
 <p>to mark those frames as reserved.</p>
 </section>
-<section id="dynamic-memory-allocator">
-<h3>Dynamic Memory Allocator<a class="headerlink" href="#dynamic-memory-allocator" title="Link to this heading">#</a></h3>
-<p>Given the allocation size,
-a dynamic memory allocator needs to find a large enough contiguous memory block and return the pointer to it.
-Also, the memory block would be released after use.
-A dynamic memory allocator should be able to reuse the memory block for another memory allocation.
-Reserved or allocated memory should not be allocated again to prevent data corruption.</p>
-</section>
 <section id="page-frame-allocator">
 <h3>Page Frame Allocator<a class="headerlink" href="#page-frame-allocator" title="Link to this heading">#</a></h3>
 <p>You may be wondering why you are asked to implement another memory allocator for page frames.
@@ -439,6 +428,14 @@ Therefore, a better approach is representing available physical memory as page f
 The page frame allocator reserves and uses an additional page frame array to bookkeep the use of page frames.
 The page frame allocator should be able to allocate contiguous page frames for allocating large buffers.
 For fine-grained memory allocation, a dynamic memory allocator can allocate a page frame first then cut it into chunks.</p>
+</section>
+<section id="dynamic-memory-allocator">
+<h3>Dynamic Memory Allocator<a class="headerlink" href="#dynamic-memory-allocator" title="Link to this heading">#</a></h3>
+<p>Given the allocation size,
+a dynamic memory allocator needs to find a large enough contiguous memory block and return the pointer to it.
+Also, the memory block would be released after use.
+A dynamic memory allocator should be able to reuse the memory block for another memory allocation.
+Reserved or allocated memory should not be allocated again to prevent data corruption.</p>
 </section>
 <section id="observability-of-allocators">
 <h3>Observability of Allocators<a class="headerlink" href="#observability-of-allocators" title="Link to this heading">#</a></h3>
@@ -666,11 +663,10 @@ Instead, Startup Allocator must call <cite>memory_reserve(start, size)</cite> fo
 <li><p>Do not hardcode any physical addresses. All memory ranges (usable or reserved) must be obtained from
 the VF2 Device Tree:</p>
 <ol class="arabic simple">
-<li><p>Spin tables or early boot structures, if required by VF2</p></li>
 <li><p>Kernel image region</p></li>
 <li><p>Initramfs region</p></li>
 <li><p>Device Tree blob itself</p></li>
-<li><p>Any additional platform-specific reserved areas (e.g., CLINT, PLIC)</p></li>
+<li><p>Any additional platform-specific reserved areas (OpenSBI, Framebuffer, etc.)</p></li>
 </ol>
 </li>
 </ul>
@@ -728,8 +724,8 @@ the VF2 Device Tree:</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#goals-of-this-lab">Goals of this lab</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reserved-memory">Reserved Memory</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-memory-allocator">Dynamic Memory Allocator</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#page-frame-allocator">Page Frame Allocator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-memory-allocator">Dynamic Memory Allocator</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#observability-of-allocators">Observability of Allocators</a></li>
 </ul>
 </li>
