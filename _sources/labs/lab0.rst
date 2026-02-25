@@ -6,7 +6,7 @@ Lab 0: Environment Setup
 Introduction
 *************
 In Lab 0, you will prepare the development environment for the future labs.
-You should install the required toolchain and use it to build a bootable image for VF2.
+You should install the required toolchain and use it to build a bootable image for OrangePi RV2.
 
 *****************
 Goals of this lab
@@ -14,7 +14,7 @@ Goals of this lab
 
 * Install the RISC-V toolchain and emulator on your host system.
 * Learn the fundamentals of cross-platform bare-metal development.
-* Build and boot a minimal kernel image on QEMU and VF2.
+* Build and boot a minimal kernel image on QEMU and OrangePi RV2.
 
 .. important::
   This lab is an introductory exercise.
@@ -28,7 +28,7 @@ Cross-Platform Development
 
 .. note::
   This lab is designed and tested primarily on Linux-based systems.
-  While it may be possible to perform the tasks on other platforms (e.g., macOS or Windows with additional setup),
+  While it may be possible to perform the tasks on other platforms (e.g., macOS or Windows with WSL),
   such environments are not officially supported for now and may introduce unexpected issues.
   Please proceed with caution if you choose to use a non-Linux environment, and be aware that TA assistance may be limited in such cases.
 
@@ -36,9 +36,9 @@ Cross-Platform Development
 Cross Compiler
 ##############
 
-VF2 uses the StarFive JH-7110 System-on-Chip (SoC) with a 64-bit RISC-V processor.
-To compile your source code to 64-bit RISC-V machine code, you need a cross compiler if you develop
-on a non-RISC-V environment.
+The Orange Pi RV2 is powered by the Ky X1 System-on-Chip (SoC), featuring an octa-core 64-bit RISC-V processor. 
+To compile your source code to 64-bit RISC-V machine code, 
+you need a cross compiler if you develop on a non-RISC-V environment.
 
 .. admonition:: Todo
 
@@ -56,15 +56,18 @@ This is because most compilers automatically apply a default linker script
 during the build process. (Use ``ld --verbose`` to inspect the default script.)
 In bare-metal programming, you are responsible for defining the memory layout manually.
 
-The following is an incomplete linker script for demonstration.
+The following is a linker script template.
 You will extend it in a future lab.
 
 .. code-block:: 
 
   SECTIONS
   {
-    . = 0x80200000;
-    .text : { *(.text) }
+      . = 0x80200000;
+      .text : { *(.text) }
+      .rodata : { *(.rodata) }
+      .data : { *(.data) }
+      .bss : { *(.sbss) *(.bss) }
   }
 
 
@@ -78,7 +81,7 @@ QEMU provides such an environment for early-stage development and testing.
 
 .. warning::
   QEMU provides a machine option ``virt`` (a general-purpose virtual board),
-  but it does not fully replicate the behavior of a real VF2 board.
+  but it does not fully replicate the behavior of a real OrangePi RV2 board.
   You should always verify your code on actual hardware as well.
 
 .. admonition:: Todo
@@ -152,27 +155,9 @@ After building, you can use QEMU to see the dumped assembly.
    Although QEMU is convenient for early-stage testing, it does not emulate many VF2-specific devices.
    Do not assume success in QEMU guarantees correct behavior on hardware.
 
-************************
-Check Hardware Switches
-************************
-
-Before booting the VF2 board, ensure that the on-board DIP switches are set to boot from the SD card (``SDIO3.0`` mode). The switch configuration should be:
-
-* ``RGPIO_1``: ``0 (Low Level)``  
-* ``RGPIO_0``: ``1 (High Level)``
-
-.. image:: /images/BootModeSettingLocation.jpeg
-   :width: 400px
-   :align: center
-   :alt: Switches
-
-Refer to the `Boot User Guide <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/JH7110_Boot_UG.pdf>`_ for more information about available boot modes and switch settings.
-
-.. warning::
-   Incorrect switch settings may cause the board to boot in a mode that prevents it from starting properly.
 
 *******************
-Deploy to REAL VF2
+Deploy to OrangePi RV2
 *******************
 
 From Kernel Image to FIT Image
@@ -192,7 +177,7 @@ You also need to create a configuration file named ``kernel.its``, which specifi
 the contents and layout of the resulting FIT image. This file must reference the following components:
 
 * ``kernel.bin`` – the raw kernel image generated earlier
-* ``jh7110-starfive-visionfive-2-v1.3b.dtb`` – the device tree for VF2
+* ``x1_orangepi-rv2.dtb`` – the device tree for OrangePi RV2
 * ``initramfs.cpio`` – an optional root filesystem archive or initial ``ramdisk`` (not included in this lab; it will be introduced in a later lab. Be sure to remove the corresponding section from the ``.its`` file for now to avoid build errors)
 
 Below is a minimal example of a valid ``kernel.its`` file that includes only the kernel and device tree:
@@ -200,30 +185,33 @@ Below is a minimal example of a valid ``kernel.its`` file that includes only the
 .. code-block:: dts
 
     /dts-v1/;
-
     / {
-        description = "Minimal FIT Image";
+        description = "U-boot FIT Image for Orange Pi RV2";
+        #address-cells = <2>;
         images {
             kernel {
+                description = "Kernel Image";
                 data = /incbin/("kernel.bin");
                 type = "kernel";
                 arch = "riscv";
                 os = "linux";
                 compression = "none";
-                load = <0x0 0x40200000>;
-                entry = <0x0 0x40200000>;
+                load = <0x0 0x00200000>;
+                entry = <0x0 0x00200000>;
             };
             fdt {
-                data = /incbin/("jh7110-starfive-visionfive-2-v1.3b.dtb");
+                description = "Flat Device Tree";
+                data = /incbin/("x1_orangepi-rv2.dtb");
                 type = "flat_dt";
                 arch = "riscv";
                 compression = "none";
+                load = <0x0 0x31000000>;
             };
-            # ramdisk section can be inserted here
         };
         configurations {
-            default = "conf";
-            conf {
+            default = "config-1";
+            config-1 {
+                description = "NYCU OSC RISC-V KERNEL";
                 kernel = "kernel";
                 fdt = "fdt";
             };
@@ -231,7 +219,8 @@ Below is a minimal example of a valid ``kernel.its`` file that includes only the
     };
 
 
-The required device tree file can be `downloaded <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/jh7110-starfive-visionfive-2-v1.3b.dtb>`_ from the course resource page.
+
+The required device tree file can be `downloaded <https://github.com/nycu-caslab/OSC-RISCV-Web/raw/refs/heads/main/uploads/x1_orangepi-rv2.dtb>`_ from the course resource page.
 
 Once the required files and the ``kernel.its`` configuration are prepared,
 use the following command to generate the final FIT image:
@@ -286,7 +275,7 @@ Detailed instructions for manual setup are available at:
 
     Use one of the two methods to prepare your SD card for booting VF2.
 
-Interact with VF2
+Interact with OrangePi RV2
 ##################
 
 
@@ -310,7 +299,7 @@ Follow these steps to test the UART connection:
 4. Connect the TX, RX, and GND pins from the UART adapter to the corresponding UART header on the VF2 board.
    Refer to the diagram below for the correct wiring:
 
-   .. image:: /images/UART.png
+   .. image:: /images/OSC2026_UART.png
 
 5. Power on the VF2. Once booted, try typing on your keyboard.
    You should see the characters echoed back in your serial console.
